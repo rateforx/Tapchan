@@ -3,15 +3,17 @@
 const ServerEngine = require('lance-gg').ServerEngine;
 const nameGenerator = require('./NameGenerator');
 const NUM_BOTS = 3;
-const NUM_FOOD = 100;
+const NUM_FOOD = 200;
+const NUM_ENEMIES = 5;
 
-class SpaaaceServerEngine extends ServerEngine {
+class TapchanServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
         super(io, gameEngine, inputOptions);
 
         this.serializer.registerClass(require('../common/Missile'));
         this.serializer.registerClass(require('../common/Ship'));
         this.serializer.registerClass(require('../common/Food'));
+        this.serializer.registerClass(require('../common/UFO'));
 
         this.scoreData = {};
     }
@@ -20,6 +22,7 @@ class SpaaaceServerEngine extends ServerEngine {
         super.start();
         // for (let x = 0; x < NUM_BOTS; x++) this.makeBot();
         for (let i = 0; i < NUM_FOOD; i++) this.gameEngine.makeFood();
+        for (let i = 0; i < NUM_ENEMIES; i++) this.summonUFO();
 
         this.gameEngine.on('foodEaten', (e) => {
             //add points
@@ -41,6 +44,11 @@ class SpaaaceServerEngine extends ServerEngine {
             if (e.ship.isBot) {
                 setTimeout(() => this.makeBot(), 5000);
             }
+        });
+
+        this.gameEngine.on('playerHit', e => {
+            delete this.scoreData[e.pacman.id];
+            this.updateScore();
         });
     }
 
@@ -79,6 +87,11 @@ class SpaaaceServerEngine extends ServerEngine {
         this.updateScore();
     }
 
+    summonUFO() {
+        let ufo = this.gameEngine.makeUFO();
+        ufo.attachAI();
+    }
+
     makeBot() {
         let bot = this.gameEngine.makeShip(0);
         bot.attachAI();
@@ -100,4 +113,4 @@ class SpaaaceServerEngine extends ServerEngine {
     }
 }
 
-module.exports = SpaaaceServerEngine;
+module.exports = TapchanServerEngine;

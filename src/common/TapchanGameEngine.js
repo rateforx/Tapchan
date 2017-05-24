@@ -5,18 +5,19 @@ const GameEngine = require('lance-gg').GameEngine;
 const Missile= require('./Missile');
 const Ship = require('./Ship');
 const Food = require('./Food');
+const UFO = require('./UFO');
 
 const TwoVector = require('lance-gg').serialize.TwoVector;
 const Timer = require('./Timer');
 
-class SpaaaceGameEngine extends GameEngine {
+class TapchanGameEngine extends GameEngine {
 
     start() {
         super.start();
 
         this.timer = new Timer();
         this.timer.play();
-        this.on('server__postStep', ()=>{
+        this.on('server__postStep',() => {
             this.timer.tick();
         });
 
@@ -28,25 +29,37 @@ class SpaaaceGameEngine extends GameEngine {
 
         this.on('collisionStart', (e) => {
             let collisionObjects = Object.keys(e).map(k => e[k]);
+            // console.log(`COLLISION:\n ${Object.keys(e)}\n${collisionObjects}`);
+
             let pacman = collisionObjects.find(o => o.class === Ship);
             // let missile = collisionObjects.find(o => o.class === Missile);
             let food = collisionObjects.find(o => o.class === Food);
+            let ufo = collisionObjects.find(o => o.class === UFO);
 
-            if (!pacman || !food)
-                return;
+            if (pacman && food) {
+                this.destroyFood(food.id);
+                this.emit('foodEaten', { food, pacman });
 
+            } else if (pacman && ufo) {
+                this.emit('playerHit', { pacman });
+            }
+
+            // if (!pacman || !food)
+            //     return;
             // if (missile.ownerId !== pacman.id) {
             //     that.destroyMissile(missile.id);
             //     that.trace.info(`missile by ship=${missile.ownerId} hit ship=${pacman.id}`);
             //     that.emit('missileHit', { missile, pacman });
             // }
-
-            this.destroyFood(food.id);
-            this.emit('foodEaten', { food, pacman });
-
         });
 
         this.on('postStep', this.reduceVisibleThrust.bind(this));
+
+        /*this.on('server__playerDisconnected', (e) => {
+            let playerData = Object.keys(e).map(k => e[k]);
+            let playerId = playerData.playerId;
+
+        })*/
     };
 
     reduceVisibleThrust(postStepEv) {
@@ -127,11 +140,25 @@ class SpaaaceGameEngine extends GameEngine {
         let x = Math.floor(Math.random() * (this.worldSettings.width - 200)) + 200;
         let y = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
 
-        let food = new Food(++this.world.idCount, x, y);
+        // let food = new Food(++this.world.idCount, this, x, y);
+        let food = new Food(++this.world.idCount, this, x, y, false);
+        // food.setConstRotation();
         this.addObjectToWorld(food);
         console.log(`food added: ${food.toString()}`);
 
         return food;
+    }
+
+    makeUFO() {
+        let x = Math.floor(Math.random() * (this.worldSettings.width - 200)) + 200;
+        let y = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
+
+        let ufo = new UFO(++this.world.idCount, this, x, y);
+        // ufo.attachAI();
+        this.addObjectToWorld(ufo);
+        console.log(`ufo added: ${ufo.toString()}`);
+
+        return ufo;
     }
 
     // destroy the missile if it still exists
@@ -147,6 +174,13 @@ class SpaaaceGameEngine extends GameEngine {
             this.removeObjectFromWorld(foodId);
         }
     }
+
+    destroyShip(shipId) {
+        if (this.world.object[shipId]) {
+            this.removeObjectFromWorld(shipId);
+        }
+
+    }
 }
 
-module.exports = SpaaaceGameEngine;
+module.exports = TapchanGameEngine;

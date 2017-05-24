@@ -1,18 +1,19 @@
 const Howler = require('howler'); // eslint-disable-line no-unused-vars
 const ClientEngine = require('lance-gg').ClientEngine;
-const SpaaaceRenderer = require('../client/SpaaaceRenderer');
+const TapchanRenderer = require('./TapchanRenderer');
 const MobileControls = require('../client/MobileControls');
 const KeyboardControls = require('../client/KeyboardControls');
 const Ship = require('../common/Ship');
 const Utils = require('./../common/Utils');
 
-class SpaaaceClientEngine extends ClientEngine {
+class TapchanClientEngine extends ClientEngine {
     constructor(gameEngine, options) {
-        super(gameEngine, options, SpaaaceRenderer);
+        super(gameEngine, options, TapchanRenderer);
 
         this.serializer.registerClass(require('../common/Ship'));
         this.serializer.registerClass(require('../common/Missile'));
         this.serializer.registerClass(require('../common/Food'));
+        this.serializer.registerClass(require('../common/UFO'));
 
         this.gameEngine.on('client__preStep', this.preStep.bind(this));
     }
@@ -123,4 +124,4 @@ class SpaaaceClientEngine extends ClientEngine {
 
 }
 
-module.exports = SpaaaceClientEngine;
+module.exports = TapchanClientEngine;

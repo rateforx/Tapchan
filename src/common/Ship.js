@@ -2,7 +2,7 @@
 
 const Serializer = require('lance-gg').serialize.Serializer;
 const DynamicObject = require('lance-gg').serialize.DynamicObject;
-const Utils = require('../../../Tapchan/src/common/Utils');
+const Utils = require('./Utils');
 
 class Ship extends DynamicObject {
 

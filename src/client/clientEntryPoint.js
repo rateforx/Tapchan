@@ -1,6 +1,6 @@
 const qsOptions = require('query-string').parse(location.search);
-const SpaaaceClientEngine = require('../client/SpaaaceClientEngine');
-const SpaaaceGameEngine = require('../common/SpaaaceGameEngine');
+const TapchanClientEngine = require('./TapchanClientEngine');
+const TapchanGameEngine = require('../common/TapchanGameEngine');
 const SimplePhysicsEngine = require('lance-gg').physics.SimplePhysicsEngine;
 require('../../assets/sass/main.scss');
 
@@ -21,7 +21,7 @@ let options = Object.assign(defaults, qsOptions);
 // create a client engine and a game engine
 const physicsEngine = new SimplePhysicsEngine({ collisionOptions: { COLLISION_DISTANCE: 25 } } );
 const gameOptions = Object.assign({ physicsEngine }, options);
-const gameEngine = new SpaaaceGameEngine(gameOptions);
-const clientEngine = new SpaaaceClientEngine(gameEngine, options);
+const gameEngine = new TapchanGameEngine(gameOptions);
+const clientEngine = new TapchanClientEngine(gameEngine, options);
 
 clientEngine.start();

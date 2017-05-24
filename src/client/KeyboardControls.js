@@ -1,5 +1,5 @@
 const EventEmitter = require('eventemitter3');
-const Utils = require('../../../Tapchan/src/common/Utils');
+const Utils = require('../common/Utils');
 
 
 // keyboard handling

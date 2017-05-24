@@ -15,8 +15,8 @@ let requestHandler = server.listen(PORT, () => console.log(`Listening on ${ PORT
 const io = socketIO(requestHandler);
 
 // Game Server
-const SpaaaceServerEngine = require(path.join(__dirname, 'src/server/SpaaaceServerEngine.js'));
-const SpaaaceGameEngine = require(path.join(__dirname, 'src/common/SpaaaceGameEngine.js'));
+const SpaaaceServerEngine = require(path.join(__dirname, 'src/server/TapchanServerEngine.js'));
+const SpaaaceGameEngine = require(path.join(__dirname, 'src/common/TapchanGameEngine.js'));
 const SimplePhysicsEngine = require('lance-gg').physics.SimplePhysicsEngine;
 
 // Game Instances

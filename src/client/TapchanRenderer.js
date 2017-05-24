@@ -2,19 +2,20 @@
 
 const PIXI = require('pixi.js');
 const Renderer = require('lance-gg').render.Renderer;
-const Utils= require('./../common/Utils');
+const Utils = require('./../common/Utils');
 
 const Missile = require('../common/Missile');
 const Ship = require('../common/Ship');
 const Food = require('../common/Food');
 const ShipActor = require('./ShipActor');
+const UFO = require('../common/UFO');
 
 /**
- * Renderer for the Spaaace client - based on Pixi.js
+ * Renderer for the Tapchan client - based on Pixi.js
  */
-class SpaaaceRenderer extends Renderer {
+class TapchanRenderer extends Renderer {
 
-    get ASSETPATHS(){
+    get ASSETPATHS() {
         return {
             ship: 'assets/ship1.png',
             missile: 'assets/shot.png',
@@ -23,21 +24,21 @@ class SpaaaceRenderer extends Renderer {
             bg3: 'assets/clouds2.png',
             bg4: 'assets/clouds1.png',
             smokeParticle: 'assets/smokeparticle.png',
-            pacman: 'assets/pacman.png',
+            pacman: 'assets/orzel.png',
             ghost: 'assets/ghost.png',
             wall: 'assets/wall.png',
-            food: 'assets/food.png'
+            food: 'assets/food.png',
+            dove: 'assets/dove.png',
         };
     }
 
-    // TODO: document
     constructor(gameEngine, clientEngine) {
         super(gameEngine, clientEngine);
         this.sprites = {};
         this.isReady = false;
 
         // asset prefix
-        this.assetPathPrefix = this.gameEngine.options.assetPathPrefix?this.gameEngine.options.assetPathPrefix:'';
+        this.assetPathPrefix = this.gameEngine.options.assetPathPrefix ? this.gameEngine.options.assetPathPrefix : '';
 
         // these define how many gameWorlds the player ship has "scrolled" through
         this.bgPhaseX = 0;
@@ -57,51 +58,53 @@ class SpaaaceRenderer extends Renderer {
         if (document.readyState === 'complete' || document.readyState === 'loaded' || document.readyState === 'interactive') {
             this.onDOMLoaded();
         } else {
-            document.addEventListener('DOMContentLoaded', ()=>{
+            document.addEventListener('DOMContentLoaded', () => {
                 this.onDOMLoaded();
             });
         }
 
-        return new Promise((resolve, reject)=>{
-            PIXI.loader.add(Object.keys(this.ASSETPATHS).map((x)=>{
-                return{
+        return new Promise((resolve, reject) => {
+            PIXI.loader.add(Object.keys(this.ASSETPATHS).map((x) => {
+                return {
                     name: x,
                     url: this.assetPathPrefix + this.ASSETPATHS[x]
                 };
             }))
-            .load(() => {
-                this.isReady = true;
-                this.setupStage();
-                this.gameEngine.emit('renderer.ready');
+                .load(() => {
+                    this.isReady = true;
+                    this.setupStage();
+                    this.gameEngine.emit('renderer.ready');
 
-                if (Utils.isTouchDevice()){
-                    document.body.classList.add('touch');
-                } else if (isMacintosh()) {
-                    document.body.classList.add('mac');
-                } else if (isWindows()) {
-                    document.body.classList.add('pc');
-                }
+                    if (Utils.isTouchDevice()) {
+                        document.body.classList.add('touch');
+                    } else if (isMacintosh()) {
+                        document.body.classList.add('mac');
+                    } else if (isWindows()) {
+                        document.body.classList.add('pc');
+                    }
 
-                resolve();
-            });
+                    resolve();
+                });
         });
     }
 
-    onDOMLoaded(){
+    onDOMLoaded() {
         this.renderer = PIXI.autoDetectRenderer(this.viewportWidth, this.viewportHeight);
         document.body.querySelector('.pixiContainer').appendChild(this.renderer.view);
     }
 
     setupStage() {
-        window.addEventListener('resize', ()=>{ this.setRendererSize(); });
+        window.addEventListener('resize', () => {
+            this.setRendererSize();
+        });
 
-        this.lookingAt = { x: 0, y: 0 };
+        this.lookingAt = {x: 0, y: 0};
         this.camera = new PIXI.Container();
         this.camera.addChild(this.layer1, this.layer2);
 
         // parallax background
         this.bg1 = new PIXI.extras.TilingSprite(PIXI.loader.resources.bg1.texture,
-                this.viewportWidth, this.viewportHeight);
+            this.viewportWidth, this.viewportHeight);
         this.bg2 = new PIXI.extras.TilingSprite(PIXI.loader.resources.bg2.texture,
             this.viewportWidth, this.viewportHeight);
         this.bg3 = new PIXI.extras.TilingSprite(PIXI.loader.resources.bg3.texture,
@@ -116,13 +119,13 @@ class SpaaaceRenderer extends Renderer {
         // this.stage.addChild(this.bg1, this.bg2, this.bg3, this.bg4);
         this.stage.addChild(this.camera);
 
-        this.debug= new PIXI.Graphics();
+        this.debug = new PIXI.Graphics();
         this.camera.addChild(this.debug);
 
-        this.debugText = new PIXI.Text('DEBUG', {fontFamily:"arial", fontSize: "100px", fill:"white"});
+        this.debugText = new PIXI.Text('DEBUG', {fontFamily: "arial", fontSize: "100px", fill: "white"});
         this.debugText.anchor.set(0.5, 0.5);
-        this.debugText.x = this.gameEngine.worldSettings.width/2;
-        this.debugText.y = this.gameEngine.worldSettings.height/2;
+        this.debugText.x = this.gameEngine.worldSettings.width / 2;
+        this.debugText.y = this.gameEngine.worldSettings.height / 2;
         this.camera.addChild(this.debugText);
 
         this.elapsedTime = Date.now();
@@ -185,10 +188,10 @@ class SpaaaceRenderer extends Renderer {
                 sprite.x = objData.position.x;
                 sprite.y = objData.position.y;
 
-                if (objData.class == Ship){
-                    sprite.actor.shipContainerSprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI/180;
-                } else{
-                    sprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI/180;
+                if (objData.class == Ship) {
+                    sprite.actor.shipContainerSprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
+                } else {
+                    sprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
                 }
 
                 // make the wraparound seamless for objects other than the player ship
@@ -296,10 +299,11 @@ class SpaaaceRenderer extends Renderer {
             sprite.id = objData.id;
 
             if (this.clientEngine.isOwnedByPlayer(objData)) {
+                let tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 4) + 16777215 / 2)).toString(16);
+                sprite.actor.shipSprite.tint = tint; // color  player ship
                 this.playerShip = sprite; // save reference to the player ship
-                sprite.actor.shipSprite.tint = 0xFF00FF; // color  player ship
                 document.body.classList.remove('lostGame');
-                if (!document.body.classList.contains('tutorialDone')){
+                if (!document.body.classList.contains('tutorialDone')) {
                     document.body.classList.add('tutorial');
                 }
                 document.body.classList.remove('lostGame');
@@ -326,7 +330,9 @@ class SpaaaceRenderer extends Renderer {
             sprite.height = 46 * 0.5;
 
             sprite.anchor.set(0.5, 0.5);
+
         } else if (objData.class === Food) {
+
             sprite = new PIXI.Sprite(PIXI.loader.resources.food.texture);
             //food into rainbow pukes
             sprite.tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 2) + 16777215 / 2)).toString(16);
@@ -334,6 +340,17 @@ class SpaaaceRenderer extends Renderer {
 
             sprite.width = 10;
             sprite.height = 10;
+
+            sprite.anchor.set(.5, .5);
+
+        } else if (objData.class === UFO) {
+
+            let texture = PIXI.loader.resources.dove.texture;
+            texture.frame = new PIXI.Rectangle(0, 0, 80, 80);
+            sprite = new PIXI.Sprite(texture);
+
+            sprite.width = 50;
+            sprite.height = 50;
 
             sprite.anchor.set(.5, .5);
         }
@@ -359,11 +376,11 @@ class SpaaaceRenderer extends Renderer {
         let sprite = this.sprites[obj.id];
         if (sprite.actor) {
             // removal "takes time"
-            sprite.actor.destroy().then(()=>{
+            sprite.actor.destroy().then(() => {
                 console.log('deleted sprite');
                 delete this.sprites[obj.id];
             });
-        } else{
+        } else {
             this.sprites[obj.id].destroy();
             delete this.sprites[obj.id];
         }
@@ -376,7 +393,7 @@ class SpaaaceRenderer extends Renderer {
      */
     centerCamera(targetX, targetY) {
         if (isNaN(targetX) || isNaN(targetY)) return;
-        if (!this.lastCameraPosition){
+        if (!this.lastCameraPosition) {
             this.lastCameraPosition = {};
         }
 
@@ -397,7 +414,7 @@ class SpaaaceRenderer extends Renderer {
         container.appendChild(indicatorEl);
     }
 
-    updateOffscreenIndicator(objData){
+    updateOffscreenIndicator(objData) {
         // player ship might have been destroyed
         if (!this.playerShip) return;
 
@@ -408,7 +425,7 @@ class SpaaaceRenderer extends Renderer {
         }
         let playerShipObj = this.gameEngine.world.objects[this.playerShip.id];
         let slope = (objData.position.y - playerShipObj.position.y) / (objData.position.x - playerShipObj.position.x);
-        let b = this.viewportHeight/ 2;
+        let b = this.viewportHeight / 2;
 
         // this.debug.clear();
         // this.debug.lineStyle(1, 0xFF0000 ,1);
@@ -417,60 +434,64 @@ class SpaaaceRenderer extends Renderer {
         // this.debug.endFill();
 
         let padding = 30;
-        let indicatorPos = { x: 0, y: 0 };
+        let indicatorPos = {x: 0, y: 0};
 
-        if (objData.position.y < playerShipObj.position.y - this.viewportHeight/2) {
-            indicatorPos.x = this.viewportWidth/2 + (padding - b)/slope;
+        if (objData.position.y < playerShipObj.position.y - this.viewportHeight / 2) {
+            indicatorPos.x = this.viewportWidth / 2 + (padding - b) / slope;
             indicatorPos.y = padding;
-        } else if (objData.position.y > playerShipObj.position.y + this.viewportHeight/2) {
-            indicatorPos.x = this.viewportWidth/2 + (this.viewportHeight - padding - b)/slope;
+        } else if (objData.position.y > playerShipObj.position.y + this.viewportHeight / 2) {
+            indicatorPos.x = this.viewportWidth / 2 + (this.viewportHeight - padding - b) / slope;
             indicatorPos.y = this.viewportHeight - padding;
         }
 
-        if (objData.position.x < playerShipObj.position.x - this.viewportWidth/2) {
+        if (objData.position.x < playerShipObj.position.x - this.viewportWidth / 2) {
             indicatorPos.x = padding;
-            indicatorPos.y = slope * (-this.viewportWidth/2 + padding) + b;
-        } else if (objData.position.x > playerShipObj.position.x + this.viewportWidth/2) {
+            indicatorPos.y = slope * (-this.viewportWidth / 2 + padding) + b;
+        } else if (objData.position.x > playerShipObj.position.x + this.viewportWidth / 2) {
             indicatorPos.x = this.viewportWidth - padding;
-            indicatorPos.y = slope * (this.viewportWidth/2 - padding) + b;
+            indicatorPos.y = slope * (this.viewportWidth / 2 - padding) + b;
         }
 
-        if (indicatorPos.x == 0 && indicatorPos.y == 0){
+        if (indicatorPos.x == 0 && indicatorPos.y == 0) {
             indicatorEl.style.opacity = 0;
         } else {
             indicatorEl.style.opacity = 1;
             let rotation = Math.atan2(objData.position.y - playerShipObj.position.y, objData.position.x - playerShipObj.position.x);
-            rotation = rotation * 180/Math.PI; // rad2deg
+            rotation = rotation * 180 / Math.PI; // rad2deg
             indicatorEl.style.transform = `translateX(${indicatorPos.x}px) translateY(${indicatorPos.y}px) rotate(${rotation}deg) `;
         }
     }
 
     removeOffscreenIndicator(objData) {
-        let indicatorEl = document.querySelector('#offscreenIndicator'+objData.id);
+        let indicatorEl = document.querySelector('#offscreenIndicator' + objData.id);
         indicatorEl.parentNode.removeChild(indicatorEl);
     }
 
-    updateHUD(data){
-        if (data.RTT){ qs('.latencyData').innerHTML = data.RTT;}
-        if (data.RTTAverage){ qs('.averageLatencyData').innerHTML = truncateDecimals(data.RTTAverage, 2);}
+    updateHUD(data) {
+        if (data.RTT) {
+            qs('.latencyData').innerHTML = data.RTT;
+        }
+        if (data.RTTAverage) {
+            qs('.averageLatencyData').innerHTML = truncateDecimals(data.RTTAverage, 2);
+        }
     }
 
-    updateScore(data){
+    updateScore(data) {
         let scoreContainer = qs('.score');
         let scoreArray = [];
 
         // remove score lines with objects that don't exist anymore
         let scoreEls = scoreContainer.querySelectorAll('.line');
-        for (let x=0; x < scoreEls.length; x++){
-            if (data[scoreEls[x].dataset.objId] == null){
+        for (let x = 0; x < scoreEls.length; x++) {
+            if (data[scoreEls[x].dataset.objId] == null) {
                 scoreEls[x].parentNode.removeChild(scoreEls[x]);
             }
         }
 
-        for (let id of Object.keys(data)){
+        for (let id of Object.keys(data)) {
             let scoreEl = scoreContainer.querySelector(`[data-obj-id='${id}']`);
             // create score line if it doesn't exist
-            if (scoreEl == null){
+            if (scoreEl == null) {
                 scoreEl = document.createElement('div');
                 scoreEl.classList.add('line');
                 if (this.playerShip && this.playerShip.id == parseInt(id)) scoreEl.classList.add('you');
@@ -490,15 +511,17 @@ class SpaaaceRenderer extends Renderer {
             });
         }
 
-        scoreArray.sort((a, b) => {return a.data.points < b.data.points;});
+        scoreArray.sort((a, b) => {
+            return a.data.points < b.data.points;
+        });
 
-        for (let x=0; x < scoreArray.length; x++){
+        for (let x = 0; x < scoreArray.length; x++) {
             scoreArray[x].el.style.transform = `translateY(${x}rem)`;
         }
 
     }
 
-    onKeyChange(e){
+    onKeyChange(e) {
         if (this.playerShip) {
             if (e.keyName === 'up') {
                 this.playerShip.actor.thrustEmitter.emit = e.isDown;
@@ -506,7 +529,7 @@ class SpaaaceRenderer extends Renderer {
         }
     }
 
-    enableFullScreen(){
+    enableFullScreen() {
         let isInFullScreen = (document.fullScreenElement && document.fullScreenElement !== null) ||    // alternative standard method
             (document.mozFullScreen || document.webkitIsFullScreen);
 
@@ -527,7 +550,7 @@ class SpaaaceRenderer extends Renderer {
      * Takes in game coordinates and translates them into screen coordinates
      * @param obj an object with x and y properties
      */
-    gameCoordsToScreen(obj){
+    gameCoordsToScreen(obj) {
         // console.log(obj.x , this.viewportWidth / 2 , this.camera.x)
         return {
             x: obj.position.x + this.camera.x,
@@ -540,16 +563,16 @@ class SpaaaceRenderer extends Renderer {
 function getCentroid(objects) {
     let maxDistance = 500; // max distance to add to the centroid
     let shipCount = 0;
-    let centroid = { x: 0, y: 0 };
+    let centroid = {x: 0, y: 0};
     let selectedShip = null;
 
-    for (let id of Object.keys(objects)){
+    for (let id of Object.keys(objects)) {
         let obj = objects[id];
         if (obj.class == Ship) {
             if (selectedShip == null)
                 selectedShip = obj;
 
-            let objDistance = Math.sqrt( Math.pow((selectedShip.position.x-obj.position.y), 2) + Math.pow((selectedShip.position.y-obj.position.y), 2));
+            let objDistance = Math.sqrt(Math.pow((selectedShip.position.x - obj.position.y), 2) + Math.pow((selectedShip.position.y - obj.position.y), 2));
             if (selectedShip == obj || objDistance < maxDistance) {
                 centroid.x += obj.position.x;
                 centroid.y += obj.position.y;
@@ -566,7 +589,9 @@ function getCentroid(objects) {
 }
 
 // convenience function
-function qs(selector) { return document.querySelector(selector);}
+function qs(selector) {
+    return document.querySelector(selector);
+}
 
 function truncateDecimals(number, digits) {
     let multiplier = Math.pow(10, digits);
@@ -584,4 +609,4 @@ function isWindows() {
     return navigator.platform.indexOf('Win') > -1;
 }
 
-module.exports = SpaaaceRenderer;
+module.exports = TapchanRenderer;
