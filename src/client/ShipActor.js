@@ -18,7 +18,7 @@ class ShipActor{
 
 
         this.shipSprite.anchor.set(0.5, 0.5);
-        this.shipSprite.width = 65;
+        this.shipSprite.width = 100;
         this.shipSprite.height = 50;
 
 

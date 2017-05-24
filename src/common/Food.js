@@ -10,28 +10,27 @@ class Food extends DynamicObject {
 
     static get netScheme() {
         return Object.assign({
-
-        }, super.netScheme)
+            isSuper: { type: Serializer.TYPES.INT8 }
+        }, super.netScheme);
     }
 
     toString() {
-        return `Food::${super.toString()}`;
+        let s = ``;
+        if (this.isSuper) s = `Super`;
+        return s + `Food::${super.toString()}`;
     }
 
-    syncTo(other) {
-        super.syncTo(other);
-    }
-
-    constructor(id, gameEngine, x, y, isSuperfood) {
+    constructor(id, gameEngine, x, y, isSuper) {
         super(id, new TwoVector(x, y));
         this.gameEngine = gameEngine;
-        this.superFood = isSuperfood === true;
+        // if (isSuperfood !== undefined)
+            this.isSuper = isSuper;
         /*Math.floor(Math.random()) > .5
             ? this.isRotatingRight = true
             : this.isRotatingLeft = true;
         this.constRotation = this.isRotatingRight ? 'right' : 'left';*/
-        this.constRotation = Math.floor(Math.random()) > .5 ? 'right' : 'left';
-        this.rotationSpeed = Math.random() * 10 + 5;
+        // this.constRotation = Math.floor(Math.random()) > .5 ? 'right' : 'left';
+        // this.rotationSpeed = Math.random() * 10 + 5;
         this.class = Food;
     }
 
@@ -43,7 +42,5 @@ class Food extends DynamicObject {
         };
         this.gameEngine.on('preStep', this.onPreStep);
     }
-
-    get isSuperFood() { return this.isSuperFood; }
 }
 module.exports = Food;

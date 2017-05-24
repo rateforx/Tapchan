@@ -30,6 +30,7 @@ class TapchanRenderer extends Renderer {
             food: 'assets/food.png',
             dove: 'assets/dove.png',
             mine: 'assets/mine.png',
+            whale: 'assets/whale.jpg',
         };
     }
 
@@ -115,19 +116,20 @@ class TapchanRenderer extends Renderer {
 
         this.bg3.blendMode = PIXI.BLEND_MODES.ADD;
         this.bg4.blendMode = PIXI.BLEND_MODES.ADD;
+
         this.bg4.alpha = 0.6;
 
         // this.stage.addChild(this.bg1, this.bg2, this.bg3, this.bg4);
         this.stage.addChild(this.camera);
 
-        this.debug = new PIXI.Graphics();
-        this.camera.addChild(this.debug);
+        // this.debug = new PIXI.Graphics();
+        // this.camera.addChild(this.debug);
 
-        this.debugText = new PIXI.Text('DEBUG', {fontFamily: "arial", fontSize: "100px", fill: "white"});
-        this.debugText.anchor.set(0.5, 0.5);
-        this.debugText.x = this.gameEngine.worldSettings.width / 2;
-        this.debugText.y = this.gameEngine.worldSettings.height / 2;
-        this.camera.addChild(this.debugText);
+        // this.debugText = new PIXI.Text('DEBUG', {fontFamily: "arial", fontSize: "100px", fill: "white"});
+        // this.debugText.anchor.set(0.5, 0.5);
+        // this.debugText.x = this.gameEngine.worldSettings.width / 2;
+        // this.debugText.y = this.gameEngine.worldSettings.height / 2;
+        // this.camera.addChild(this.debugText);
 
         this.elapsedTime = Date.now();
         // debug
@@ -179,7 +181,7 @@ class TapchanRenderer extends Renderer {
 
                 // if the object requests a "showThrust" then invoke it in the actor
                 if ((sprite !== this.playerShip) && sprite.actor) {
-                    sprite.actor.thrustEmitter.emit = !!objData.showThrust;
+                    // sprite.actor.thrustEmitter.emit = !!objData.showThrust;
                 }
 
                 if (objData.class == Ship && sprite != this.playerShip) {
@@ -300,8 +302,8 @@ class TapchanRenderer extends Renderer {
             sprite.id = objData.id;
 
             if (this.clientEngine.isOwnedByPlayer(objData)) {
-                let tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 4) + 16777215 / 2)).toString(16);
-                sprite.actor.shipSprite.tint = tint; // color  player ship
+                // let tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 4) + 16777215 / 2)).toString(16);
+                // sprite.actor.shipSprite.tint = tint; // color  player ship
                 this.playerShip = sprite; // save reference to the player ship
                 document.body.classList.remove('lostGame');
                 if (!document.body.classList.contains('tutorialDone')) {
@@ -334,13 +336,20 @@ class TapchanRenderer extends Renderer {
 
         } else if (objData.class === Food) {
 
+            let isSuper = objData.isSuper;
             sprite = new PIXI.Sprite(PIXI.loader.resources.food.texture);
             //food into rainbow pukes
             sprite.tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 2) + 16777215 / 2)).toString(16);
             this.sprites[objData.id] = sprite;
 
-            sprite.width = 10;
-            sprite.height = 10;
+            if (isSuper) {
+                console.log(`sprinting superfoods*****************`);
+                sprite.width = 20;
+                sprite.height = 20;
+            } else {
+                sprite.width = 10;
+                sprite.height = 10;
+            }
 
             sprite.anchor.set(.5, .5);
 

@@ -23,10 +23,13 @@ class TapchanServerEngine extends ServerEngine {
         for (let x = 0; x < NUM_BOTS; x++) this.makeBot();
         for (let i = 0; i < NUM_FOOD; i++) this.gameEngine.makeFood();
         for (let i = 0; i < NUM_ENEMIES; i++) this.summonUFO();
-
+        
         this.gameEngine.on('foodEaten', (e) => {
             //add points
-            if (this.scoreData[e.ship.id]) this.scoreData[e.ship.id].points++;
+            if (this.scoreData[e.ship.id])
+                e.food.isSuper
+                    ? this.scoreData[e.ship.id].points += 10
+                    : this.scoreData[e.ship.id].points++;
             this.updateScore();
 
             setTimeout(() => this.gameEngine.makeFood(), 3000);

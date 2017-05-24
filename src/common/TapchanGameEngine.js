@@ -38,10 +38,10 @@ class TapchanGameEngine extends GameEngine {
 
             if (ship && food) {
                 this.destroyFood(food.id);
-                this.emit('foodEaten', {food, ship});
+                this.emit('foodEaten', { food, ship });
 
             } else if (ship && ufo) {
-                this.emit('playerHit', {ship});
+                this.emit('playerHit', { ship });
             }
 
             // if (!ship || !food)
@@ -141,7 +141,7 @@ class TapchanGameEngine extends GameEngine {
 
         // let food = new Food(++this.world.idCount, this, x, y);
         let isSuper = Math.random() > .9;
-        let food = new Food(++this.world.idCount, this, x, y, false);
+        let food = new Food(++this.world.idCount, this, x, y, isSuper);
         // food.setConstRotation();
         this.addObjectToWorld(food);
         console.log(`food added: ${food.toString()}`);
