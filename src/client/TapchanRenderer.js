@@ -30,7 +30,9 @@ class TapchanRenderer extends Renderer {
             food: 'assets/food.png',
             dove: 'assets/dove.png',
             mine: 'assets/mine.png',
-            whale: 'assets/whale.jpg',
+            whale: 'assets/whale.png',
+            bubble: 'assets/bubble.png',
+            water: 'assets/water.png',
         };
     }
 
@@ -105,7 +107,7 @@ class TapchanRenderer extends Renderer {
         this.camera.addChild(this.layer1, this.layer2);
 
         // parallax background
-        this.bg1 = new PIXI.extras.TilingSprite(PIXI.loader.resources.bg1.texture,
+        this.bg1 = new PIXI.extras.TilingSprite(PIXI.loader.resources.water.texture,
             this.viewportWidth, this.viewportHeight);
         this.bg2 = new PIXI.extras.TilingSprite(PIXI.loader.resources.bg2.texture,
             this.viewportWidth, this.viewportHeight);
@@ -120,6 +122,7 @@ class TapchanRenderer extends Renderer {
         this.bg4.alpha = 0.6;
 
         // this.stage.addChild(this.bg1, this.bg2, this.bg3, this.bg4);
+        this.stage.addChild(this.bg1);
         this.stage.addChild(this.camera);
 
         // this.debug = new PIXI.Graphics();
@@ -343,7 +346,6 @@ class TapchanRenderer extends Renderer {
             this.sprites[objData.id] = sprite;
 
             if (isSuper) {
-                console.log(`sprinting superfoods*****************`);
                 sprite.width = 20;
                 sprite.height = 20;
             } else {
@@ -380,7 +382,6 @@ class TapchanRenderer extends Renderer {
 
         if (obj.class == Ship && this.playerShip && obj.id != this.playerShip.id) {
             this.removeOffscreenIndicator(obj);
-
         }
 
         let sprite = this.sprites[obj.id];

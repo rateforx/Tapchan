@@ -55,6 +55,8 @@ class TapchanServerEngine extends ServerEngine {
             // this.gameEngine.destroyShip(e.ship.id);
             this.gameEngine.removeObjectFromWorld(e.ship.id);
             if (e.ship.isBot) setTimeout(() => this.makeBot(), 5000);
+            // this.gameEngine.removeObjectFromWorld(e.ufo.id);
+            // setTimeout(() => this.summonUFO(), 3000);
         });
     }
 
