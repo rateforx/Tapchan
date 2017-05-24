@@ -20,7 +20,7 @@ class TapchanServerEngine extends ServerEngine {
 
     start() {
         super.start();
-        // for (let x = 0; x < NUM_BOTS; x++) this.makeBot();
+        for (let x = 0; x < NUM_BOTS; x++) this.makeBot();
         for (let i = 0; i < NUM_FOOD; i++) this.gameEngine.makeFood();
         for (let i = 0; i < NUM_ENEMIES; i++) this.summonUFO();
 

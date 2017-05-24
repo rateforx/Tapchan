@@ -29,7 +29,7 @@ class TapchanGameEngine extends GameEngine {
 
         this.on('collisionStart', (e) => {
             let collisionObjects = Object.keys(e).map(k => e[k]);
-            // console.log(`COLLISION:\n ${Object.keys(e)}\n${collisionObjects}`);
+            console.log(`COLLISION:\n ${Object.keys(e)}\n${collisionObjects}`);
 
             let pacman = collisionObjects.find(o => o.class === Ship);
             // let missile = collisionObjects.find(o => o.class === Missile);
@@ -52,7 +52,6 @@ class TapchanGameEngine extends GameEngine {
             //     that.emit('missileHit', { missile, pacman });
             // }
         });
-
         this.on('postStep', this.reduceVisibleThrust.bind(this));
 
         /*this.on('server__playerDisconnected', (e) => {
@@ -154,8 +153,7 @@ class TapchanGameEngine extends GameEngine {
         let y = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
 
         let ufo = new UFO(++this.world.idCount, this, x, y);
-        // ufo.attachAI();
-        this.addObjectToWorld(ufo);
+        ufo = this.addObjectToWorld(ufo);
         console.log(`ufo added: ${ufo.toString()}`);
 
         return ufo;
