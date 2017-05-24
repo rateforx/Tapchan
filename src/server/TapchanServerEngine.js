@@ -2,9 +2,9 @@
 
 const ServerEngine = require('lance-gg').ServerEngine;
 const nameGenerator = require('./NameGenerator');
-const NUM_BOTS = 3;
-const NUM_FOOD = 200;
-const NUM_ENEMIES = 5;
+const NUM_BOTS = 10;
+const NUM_FOOD = 100;
+const NUM_ENEMIES = 40;
 
 class TapchanServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
@@ -26,7 +26,7 @@ class TapchanServerEngine extends ServerEngine {
 
         this.gameEngine.on('foodEaten', (e) => {
             //add points
-            if (this.scoreData[e.pacman.id]) this.scoreData[e.pacman.id].points++;
+            if (this.scoreData[e.ship.id]) this.scoreData[e.ship.id].points++;
             this.updateScore();
 
             setTimeout(() => this.gameEngine.makeFood(), 3000);
@@ -47,8 +47,11 @@ class TapchanServerEngine extends ServerEngine {
         });
 
         this.gameEngine.on('playerHit', e => {
-            delete this.scoreData[e.pacman.id];
+            delete this.scoreData[e.ship.id];
             this.updateScore();
+            // this.gameEngine.destroyShip(e.ship.id);
+            this.gameEngine.removeObjectFromWorld(e.ship.id);
+            if (e.ship.isBot) setTimeout(() => this.makeBot(), 5000);
         });
     }
 

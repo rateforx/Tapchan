@@ -19,7 +19,7 @@ const defaults = {
 let options = Object.assign(defaults, qsOptions);
 
 // create a client engine and a game engine
-const physicsEngine = new SimplePhysicsEngine({ collisionOptions: { COLLISION_DISTANCE: 25 } } );
+const physicsEngine = new SimplePhysicsEngine({ collisionOptions: { COLLISION_DISTANCE: 50 } } );
 const gameOptions = Object.assign({ physicsEngine }, options);
 const gameEngine = new TapchanGameEngine(gameOptions);
 const clientEngine = new TapchanClientEngine(gameEngine, options);

@@ -19,10 +19,14 @@ class UFO extends DynamicObject {
         super(id, new TwoVector(x, y));
         this.class = UFO;
         this.gameEngine = gameEngine;
+        // this.velocity.set(Math.random() * 10, Math.random() * 10);
     }
 
     destroy() {
-
+        if (this.onPreStep) {
+            this.gameEngine.removeListener('preStep', this.onPreStep);
+            this.onPreStep = null;
+        }
     }
 
     attachAI() {
@@ -31,8 +35,6 @@ class UFO extends DynamicObject {
         };
 
         this.gameEngine.on('preStep', this.onPreStep);
-
-        //chase player
     }
 
     distanceToTargetSquared(target) {

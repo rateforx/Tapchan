@@ -4,6 +4,8 @@ const Serializer = require('lance-gg').serialize.Serializer;
 const DynamicObject = require('lance-gg').serialize.DynamicObject;
 const Utils = require('./Utils');
 
+const UFO = require('./UFO');
+
 class Ship extends DynamicObject {
 
     static get netScheme() {
@@ -40,7 +42,7 @@ class Ship extends DynamicObject {
         }
     }
 
-    get maxSpeed() { return 3.0; }
+    get maxSpeed() { return 4.0; }
 
     attachAI() {
         this.isBot = true;
@@ -77,7 +79,8 @@ class Ship extends DynamicObject {
         let closestDistance2 = Infinity;
         for (let objId of Object.keys(this.gameEngine.world.objects)) {
             let obj = this.gameEngine.world.objects[objId];
-            if (obj != this) {
+            // if (obj != this) {
+            if (obj.class == UFO) {
                 let distance2 = this.distanceToTargetSquared(obj);
                 if (distance2 < closestDistance2) {
                     closestTarget = obj;

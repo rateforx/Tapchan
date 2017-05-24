@@ -29,6 +29,7 @@ class TapchanRenderer extends Renderer {
             wall: 'assets/wall.png',
             food: 'assets/food.png',
             dove: 'assets/dove.png',
+            mine: 'assets/mine.png',
         };
     }
 
@@ -345,12 +346,12 @@ class TapchanRenderer extends Renderer {
 
         } else if (objData.class === UFO) {
 
-            let texture = PIXI.loader.resources.dove.texture;
-            texture.frame = new PIXI.Rectangle(0, 0, 80, 80);
-            sprite = new PIXI.Sprite(texture);
+            sprite = new PIXI.Sprite(PIXI.loader.resources.mine.texture);
+            // texture.frame = new PIXI.Rectangle(0, 0, 80, 80);
+            // sprite = new PIXI.Sprite(texture);
 
-            sprite.width = 50;
-            sprite.height = 50;
+            sprite.width = 60;
+            sprite.height = 60;
 
             sprite.anchor.set(.5, .5);
         }
