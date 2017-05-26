@@ -6,7 +6,7 @@ const Utils = require('./../common/Utils');
 
 const Fish = require('../common/Fish');
 const Food = require('../common/Food');
-const ShipActor = require('./ShipActor');
+const ShipActor = require('./FishActor');
 const Mine = require('../common/Mine');
 
 /**
@@ -271,7 +271,6 @@ class TapchanRenderer extends Renderer {
             sprite = new PIXI.Sprite(PIXI.loader.resources.food.texture);
             //food into rainbow pukes
             sprite.tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 2) + 16777215 / 2)).toString(16);
-            this.sprites[objData.id] = sprite;
 
             if (isSuper) {
                 sprite.width = 20;
@@ -280,17 +279,20 @@ class TapchanRenderer extends Renderer {
                 sprite.width = 10;
                 sprite.height = 10;
             }
-
             sprite.anchor.set(.5, .5);
+
+            this.sprites[objData.id] = sprite;
 
         } else if (objData.class === Mine) {
 
             sprite = new PIXI.Sprite(PIXI.loader.resources.mine.texture);
 
             sprite.width = 60;
-            sprite.height = 60;
 
+            sprite.height = 60;
             sprite.anchor.set(.5, .5);
+
+            this.sprites[objData.id] = sprite;
         }
 
         sprite.position.set(objData.position.x, objData.position.y);
@@ -307,6 +309,7 @@ class TapchanRenderer extends Renderer {
         }
 
         let sprite = this.sprites[obj.id];
+        if (!sprite) return;
         if (sprite.actor) {
             // removal "takes time"
             sprite.actor.destroy().then(() => {
@@ -470,14 +473,6 @@ function truncateDecimals(number, digits) {
     let truncatedNum = Math[adjustedNum < 0 ? 'ceil' : 'floor'](adjustedNum);
 
     return truncatedNum / multiplier;
-};
-
-function isMacintosh() {
-    return navigator.platform.indexOf('Mac') > -1;
-}
-
-function isWindows() {
-    return navigator.platform.indexOf('Win') > -1;
 }
 
 module.exports = TapchanRenderer;

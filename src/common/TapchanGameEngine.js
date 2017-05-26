@@ -22,8 +22,8 @@ class TapchanGameEngine extends GameEngine {
 
         this.worldSettings = {
             worldWrap: true,
-            width: 3000,
-            height: 3000
+            width: 1000,
+            height: 1000
         };
 
         this.on('collisionStart', (e) => {
@@ -39,7 +39,7 @@ class TapchanGameEngine extends GameEngine {
                 this.emit('foodEaten', { food, fish });
 
             } else if (fish && mine) {
-                // this.destroyMine(mine.id);
+                this.destroyMine(mine.id);
                 this.emit('playerHit', { fish, mine });
             }
         });
@@ -62,24 +62,24 @@ class TapchanGameEngine extends GameEngine {
         super.processInput(inputData, playerId);
 
         // get the player ship tied to the player socket
-        let playerShip;
+        let playerFish;
 
         for (let objId in this.world.objects) {
             let o = this.world.objects[objId];
             if (o.playerId === playerId && o.class === Fish) {
-                playerShip = o;
+                playerFish = o;
                 break;
             }
         }
 
-        if (playerShip) {
+        if (playerFish) {
             if (inputData.input == 'up') {
-                playerShip.isAccelerating = true;
-                playerShip.showThrust = 5; // show thrust for next steps.
+                playerFish.isAccelerating = true;
+                playerFish.showThrust = 5; // show thrust for next steps.
             } else if (inputData.input == 'right') {
-                playerShip.isRotatingRight = true;
+                playerFish.isRotatingRight = true;
             } else if (inputData.input == 'left') {
-                playerShip.isRotatingLeft = true;
+                playerFish.isRotatingLeft = true;
             } else if (inputData.input == 'space') {
                 //     this.makeMissile(playerFish, inputData.messageIndex);
                 //     this.emit('fireMissile');

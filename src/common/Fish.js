@@ -31,6 +31,12 @@ class Fish extends DynamicObject {
         this.class = Fish;
         this.gameEngine = gameEngine;
         this.showThrust = 0;
+        this.angle = Math.random() * 360;
+
+        //movement tweaks
+        this.acceleration = .2; //def .1
+        this.deceleration = .5; //def .99
+        this.rotationSpeed = 3; //def 2.5
     };
 
     destroy() {
@@ -40,7 +46,7 @@ class Fish extends DynamicObject {
         }
     }
 
-    get maxSpeed() { return 4.0; }
+    get maxSpeed() { return 3.0; }
 
     attachAI() {
         this.isBot = true;

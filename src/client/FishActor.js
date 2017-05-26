@@ -3,7 +3,7 @@ const PixiParticles = require("pixi-particles");
 const TrailEmitterConfig = require("./TrailEmitter.json");
 const ExplosionEmitterConfig = require("./ExplosionEmitter.json");
 
-class ShipActor {
+class FishActor {
 
     constructor(renderer) {
         this.gameEngine = renderer.gameEngine;
@@ -60,10 +60,10 @@ class ShipActor {
     }
 
     changeName(name) {
-        if (this.nameText !== null) {
+        if (this.nameText) {
             this.nameText.destroy();
         }
-        this.nameText = new PIXI.Text(name, {fontFamily: "arial", fontSize: "14px", fill: "white"});
+        this.nameText = new PIXI.Text(name, {fontFamily: "arial", fontSize: "12px", fill: "white"});
         this.nameText.anchor.set(0.5, 0.5);
         this.nameText.y = -40;
         this.nameText.alpha = 0.3;
@@ -89,6 +89,4 @@ class ShipActor {
     }
 
 }
-
-
-module.exports = ShipActor;
+module.exports = FishActor;

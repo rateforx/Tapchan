@@ -33,8 +33,8 @@ class KeyboardControls{
 
     setupListeners(){
         // add special handler for space key
-        document.addEventListener('keydown', (e) => {
-            if (e.keyCode == '32' && !this.activeInput.space) {
+        window.addEventListener('keydown', (e) => {
+            if (e.keyCode === '32' && !this.activeInput.space) {
                 this.emit('fire');
             }
         });
