@@ -105,7 +105,6 @@ class TapchanRenderer extends Renderer {
             graphics.drawRect(0, 0, this.gameEngine.worldSettings.width, this.gameEngine.worldSettings.height);
             this.camera.addChild(graphics);
         }
-
     }
 
     setRendererSize() {

@@ -23,7 +23,7 @@ class TapchanGameEngine extends GameEngine {
         this.worldSettings = {
             worldWrap: true,
             width: 1000,
-            height: 1000
+            height: 1000,
         };
 
         this.on('collisionStart', (e) => {
