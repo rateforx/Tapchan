@@ -4,11 +4,11 @@ const PIXI = require('pixi.js');
 const Renderer = require('lance-gg').render.Renderer;
 const Utils = require('./../common/Utils');
 
-const Missile = require('../common/Missile');
-const Ship = require('../common/Ship');
+// const Missile = require('../common/Missile');
+const Ship = require('../common/Fish');
 const Food = require('../common/Food');
 const ShipActor = require('./ShipActor');
-const UFO = require('../common/UFO');
+const UFO = require('../common/Mine');
 
 /**
  * Renderer for the Tapchan client - based on Pixi.js

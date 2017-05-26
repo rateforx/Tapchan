@@ -4,69 +4,53 @@ const ServerEngine = require('lance-gg').ServerEngine;
 const nameGenerator = require('./NameGenerator');
 const NUM_BOTS = 10;
 const NUM_FOOD = 100;
-const NUM_ENEMIES = 40;
+const NUM_MINES = 40;
 
 class TapchanServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
         super(io, gameEngine, inputOptions);
 
-        this.serializer.registerClass(require('../common/Missile'));
-        this.serializer.registerClass(require('../common/Ship'));
+        this.serializer.registerClass(require('../common/Fish'));
         this.serializer.registerClass(require('../common/Food'));
-        this.serializer.registerClass(require('../common/UFO'));
+        this.serializer.registerClass(require('../common/Mine'));
 
         this.scoreData = {};
     }
 
     start() {
         super.start();
-        for (let x = 0; x < NUM_BOTS; x++) this.makeBot();
+        for (let i = 0; i < NUM_BOTS; i++) this.makeBot();
         for (let i = 0; i < NUM_FOOD; i++) this.gameEngine.makeFood();
-        for (let i = 0; i < NUM_ENEMIES; i++) this.summonUFO();
+        for (let i = 0; i < NUM_MINES; i++) this.gameEngine.makeMine();
         
-        this.gameEngine.on('foodEaten', (e) => {
+        this.gameEngine.on('foodEaten', e => {
             //add points
-            if (this.scoreData[e.ship.id])
+            if (this.scoreData[e.fish.id])
                 e.food.isSuper
-                    ? this.scoreData[e.ship.id].points += 10
-                    : this.scoreData[e.ship.id].points++;
+                    ? this.scoreData[e.fish.id].points += 10
+                    : this.scoreData[e.fish.id].points++;
             this.updateScore();
 
-            setTimeout(() => this.gameEngine.makeFood(), 3000);
-        });
-
-        this.gameEngine.on('missileHit', (e) => {
-            // add points
-            if (this.scoreData[e.missile.ownerId]) this.scoreData[e.missile.ownerId].points++;
-            // remove score data for killed ship
-            delete this.scoreData[e.ship.id];
-            this.updateScore();
-
-            console.log(`ship killed: ${e.ship.toString()}`);
-            this.gameEngine.removeObjectFromWorld(e.ship.id);
-            if (e.ship.isBot) {
-                setTimeout(() => this.makeBot(), 5000);
-            }
+            setTimeout(() => this.gameEngine.makeFood(), 1000);
         });
 
         this.gameEngine.on('playerHit', e => {
-            delete this.scoreData[e.ship.id];
+            delete this.scoreData[e.fish.id];
             this.updateScore();
-            // this.gameEngine.destroyShip(e.ship.id);
-            this.gameEngine.removeObjectFromWorld(e.ship.id);
-            if (e.ship.isBot) setTimeout(() => this.makeBot(), 5000);
-            // this.gameEngine.removeObjectFromWorld(e.ufo.id);
-            // setTimeout(() => this.summonUFO(), 3000);
+            this.gameEngine.destroyFish(e.fish.id);
+            this.gameEngine.destroyMine(e.mine.id);
+            setTimeout(() => this.gameEngine.makeMine(), 3000);
+            if (e.fish.isBot) setTimeout(() => this.makeBot(), 5000);
         });
     }
 
     onPlayerConnected(socket) {
         super.onPlayerConnected(socket);
 
-        let makePlayerShip = () => {
-            let ship = this.gameEngine.makeShip(socket.playerId);
+        let makePlayerFish = () => {
+            let fish = this.gameEngine.makeFish(socket.playerId);
 
-            this.scoreData[ship.id] = {
+            this.scoreData[fish.id] = {
                 points: 0,
                 name: nameGenerator('general')
             };
@@ -74,7 +58,7 @@ class TapchanServerEngine extends ServerEngine {
         };
 
         // handle client restart requests
-        socket.on('requestRestart', makePlayerShip);
+        socket.on('requestRestart', makePlayerFish);
     }
 
     onPlayerDisconnected(socketId, playerId) {
@@ -95,13 +79,8 @@ class TapchanServerEngine extends ServerEngine {
         this.updateScore();
     }
 
-    summonUFO() {
-        let ufo = this.gameEngine.makeUFO();
-        ufo.attachAI();
-    }
-
     makeBot() {
-        let bot = this.gameEngine.makeShip(0);
+        let bot = this.gameEngine.makeFish(0);
         bot.attachAI();
 
         this.scoreData[bot.id] = {

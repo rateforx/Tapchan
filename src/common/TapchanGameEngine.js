@@ -3,9 +3,9 @@
 const GameEngine = require('lance-gg').GameEngine;
 
 const Missile = require('./Missile');
-const Ship = require('./Ship');
+const Fish = require('./Fish');
 const Food = require('./Food');
-const UFO = require('./UFO');
+const Mine = require('./Mine');
 
 const TwoVector = require('lance-gg').serialize.TwoVector;
 const Timer = require('./Timer');
@@ -31,34 +31,20 @@ class TapchanGameEngine extends GameEngine {
             let collisionObjects = Object.keys(e).map(k => e[k]);
             console.log(`COLLISION:\n ${Object.keys(e)}\n${collisionObjects}`);
 
-            let ship = collisionObjects.find(o => o.class === Ship);
-            // let missile = collisionObjects.find(o => o.class === Missile);
+            let fish = collisionObjects.find(o => o.class === Fish);
             let food = collisionObjects.find(o => o.class === Food);
-            let ufo = collisionObjects.find(o => o.class === UFO);
+            let mine = collisionObjects.find(o => o.class === Mine);
 
-            if (ship && food) {
+            if (fish && food) {
                 this.destroyFood(food.id);
-                this.emit('foodEaten', { food, ship });
+                this.emit('foodEaten', { food, fish });
 
-            } else if (ship && ufo) {
-                this.emit('playerHit', { ship });
+            } else if (fish && mine) {
+                // this.destroyMine(mine.id);
+                this.emit('playerHit', { fish, mine });
             }
-
-            // if (!ship || !food)
-            //     return;
-            // if (missile.ownerId !== ship.id) {
-            //     that.destroyMissile(missile.id);
-            //     that.trace.info(`missile by ship=${missile.ownerId} hit ship=${ship.id}`);
-            //     that.emit('missileHit', { missile, ship });
-            // }
         });
         this.on('postStep', this.reduceVisibleThrust.bind(this));
-
-        /*this.on('server__playerDisconnected', (e) => {
-         let playerData = Object.keys(e).map(k => e[k]);
-         let playerId = playerData.playerId;
-
-         })*/
     };
 
     reduceVisibleThrust(postStepEv) {
@@ -81,7 +67,7 @@ class TapchanGameEngine extends GameEngine {
 
         for (let objId in this.world.objects) {
             let o = this.world.objects[objId];
-            if (o.playerId == playerId && o.class == Ship) {
+            if (o.playerId === playerId && o.class === Fish) {
                 playerShip = o;
                 break;
             }
@@ -102,39 +88,17 @@ class TapchanGameEngine extends GameEngine {
         }
     };
 
-    // Makes a new ship, places it randomly and adds it to the game world
-    makeShip(playerId) {
+    makeFish(playerId) {
         let newShipX = Math.floor(Math.random() * (this.worldSettings.width - 200)) + 200;
         let newShipY = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
 
-        let ship = new Ship(++this.world.idCount, this, new TwoVector(newShipX, newShipY));
-        ship.playerId = playerId;
-        this.addObjectToWorld(ship);
-        console.log(`ship added: ${ship.toString()}`);
+        let fish = new Fish(++this.world.idCount, this, new TwoVector(newShipX, newShipY));
+        fish.playerId = playerId;
+        this.addObjectToWorld(fish);
+        console.log(`ship added: ${fish.toString()}`);
 
-        return ship;
+        return fish;
     };
-
-    makeMissile(playerShip, inputId) {
-        let missile = new Missile(++this.world.idCount);
-        missile.position.copy(playerShip.position);
-        missile.velocity.copy(playerShip.velocity);
-        missile.angle = playerShip.angle;
-        missile.playerId = playerShip.playerId;
-        missile.ownerId = playerShip.id;
-        missile.inputId = inputId;
-        missile.velocity.x += Math.cos(missile.angle * (Math.PI / 180)) * 10;
-        missile.velocity.y += Math.sin(missile.angle * (Math.PI / 180)) * 10;
-
-        this.trace.trace(`missile[${missile.id}] created vel=${missile.velocity}`);
-
-        let obj = this.addObjectToWorld(missile);
-        if (obj)
-            this.timer.add(40, this.destroyMissile, this, [obj.id]);
-
-        return missile;
-    }
-
     makeFood() {
         let x = Math.floor(Math.random() * (this.worldSettings.width - 200)) + 200;
         let y = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
@@ -148,38 +112,57 @@ class TapchanGameEngine extends GameEngine {
 
         return food;
     }
-
-    makeUFO() {
+    makeMine() {
         let x = Math.floor(Math.random() * (this.worldSettings.width - 200)) + 200;
         let y = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
 
-        let ufo = new UFO(++this.world.idCount, this, x, y);
-        ufo = this.addObjectToWorld(ufo);
-        console.log(`ufo added: ${ufo.toString()}`);
+        let mine = new Mine(++this.world.idCount, this, x, y);
+        mine = this.addObjectToWorld(mine);
+        console.log(`ufo added: ${mine.toString()}`);
 
-        return ufo;
+        return mine;
     }
+    /*makeMissile(playerShip, inputId) {
+     let missile = new Missile(++this.world.idCount);
+     missile.position.copy(playerShip.position);
+     missile.velocity.copy(playerShip.velocity);
+     missile.angle = playerShip.angle;
+     missile.playerId = playerShip.playerId;
+     missile.ownerId = playerShip.id;
+     missile.inputId = inputId;
+     missile.velocity.x += Math.cos(missile.angle * (Math.PI / 180)) * 10;
+     missile.velocity.y += Math.sin(missile.angle * (Math.PI / 180)) * 10;
 
-    // destroy the missile if it still exists
-    destroyMissile(missileId) {
-        if (this.world.objects[missileId]) {
-            this.trace.trace(`missile[${missileId}] destroyed`);
-            this.removeObjectFromWorld(missileId);
-        }
-    }
+     this.trace.trace(`missile[${missile.id}] created vel=${missile.velocity}`);
+
+     let obj = this.addObjectToWorld(missile);
+     if (obj)
+     this.timer.add(40, this.destroyMissile, this, [obj.id]);
+
+     return missile;
+     }*/
 
     destroyFood(foodId) {
-        if (this.world.objects[foodId]) {
+        if (this.world.objects[foodId] && this.world.objects[foodId].class === Food) {
             this.removeObjectFromWorld(foodId);
         }
     }
-
-    destroyShip(shipId) {
-        if (this.world.object[shipId]) {
-            this.removeObjectFromWorld(shipId);
+    destroyFish(fishId) {
+        if (this.world.objects[fishId] && this.world.objects[fishId].class === Fish) {
+            this.removeObjectFromWorld(fishId);
         }
-
     }
+    destroyMine(mineId) {
+        if (this.world.objects[mineId] && this.world.objects[mineId].class === Mine)
+            this.removeObjectFromWorld(mineId);
+    }
+    /*destroyMissile(missileId) {
+     if (this.world.objects[missileId] && this.world.objects[missileId].class === Missile) {
+     this.trace.trace(`missile[${missileId}] destroyed`);
+     this.removeObjectFromWorld(missileId);
+     }
+     }*/
+
 }
 
 module.exports = TapchanGameEngine;

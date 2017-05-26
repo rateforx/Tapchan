@@ -1,6 +1,6 @@
 const PIXI = require("pixi.js");
 const PixiParticles = require("pixi-particles");
-const ThrusterEmitterConfig = require("./ThrusterEmitter.json");
+const TrailEmitterConfig = require("./TrailEmitter.json");
 const ExplosionEmitterConfig = require("./ExplosionEmitter.json");
 
 class ShipActor {
@@ -47,7 +47,7 @@ class ShipActor {
         this.thrustEmitter = new PIXI.particles.Emitter(
             this.backLayer,
             [PIXI.loader.resources.bubble.texture],
-            ThrusterEmitterConfig
+            TrailEmitterConfig
         );
         this.thrustEmitter.emit = false;
 

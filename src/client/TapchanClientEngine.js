@@ -3,17 +3,17 @@ const ClientEngine = require('lance-gg').ClientEngine;
 const TapchanRenderer = require('./TapchanRenderer');
 const MobileControls = require('../client/MobileControls');
 const KeyboardControls = require('../client/KeyboardControls');
-const Ship = require('../common/Ship');
+const Fish = require('../common/Fish');
 const Utils = require('./../common/Utils');
 
 class TapchanClientEngine extends ClientEngine {
     constructor(gameEngine, options) {
         super(gameEngine, options, TapchanRenderer);
 
-        this.serializer.registerClass(require('../common/Ship'));
+        this.serializer.registerClass(require('../common/Fish'));
         this.serializer.registerClass(require('../common/Missile'));
         this.serializer.registerClass(require('../common/Food'));
-        this.serializer.registerClass(require('../common/UFO'));
+        this.serializer.registerClass(require('../common/Mine'));
 
         this.gameEngine.on('client__preStep', this.preStep.bind(this));
     }
@@ -24,7 +24,7 @@ class TapchanClientEngine extends ClientEngine {
 
         // handle gui for game condition
         this.gameEngine.on('objectDestroyed', (obj) => {
-            if (obj.class == Ship && this.isOwnedByPlayer(obj)) {
+            if (obj.class === Fish && this.isOwnedByPlayer(obj)) {
                 document.body.classList.add('lostGame');
                 document.querySelector('#tryAgain').disabled = false;
             }

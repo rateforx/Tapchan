@@ -2,11 +2,12 @@
 
 const Serializer = require('lance-gg').serialize.Serializer;
 const DynamicObject = require('lance-gg').serialize.DynamicObject;
+const TwoVector = require('lance-gg').serialize.TwoVector;
 const Utils = require('./Utils');
 
-const UFO = require('./UFO');
+const Food = require('./Food');
 
-class Ship extends DynamicObject {
+class Fish extends DynamicObject {
 
     static get netScheme() {
         return Object.assign({
@@ -15,7 +16,7 @@ class Ship extends DynamicObject {
     }
 
     toString() {
-        return `${this.isBot?'Bot':'Player'}::Ship::${super.toString()}`;
+        return `${this.isBot?'Bot':'Player'}::Fish::${super.toString()}`;
     }
 
     get bendingAngleLocalMultiple() { return 0.0; }
@@ -26,16 +27,16 @@ class Ship extends DynamicObject {
     }
 
     constructor(id, gameEngine, x, y) {
+
+        //HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!
         super(id, x, y);
-        this.class = Ship;
+        // super(id, new TwoVector(x, y));  //<-- Does not work like this
+        this.class = Fish;
         this.gameEngine = gameEngine;
         this.showThrust = 0;
     };
 
     destroy() {
-        if (this.fireLoop) {
-            this.fireLoop.destroy();
-        }
         if (this.onPreStep){
             this.gameEngine.removeListener('preStep', this.onPreStep);
             this.onPreStep = null;
@@ -52,13 +53,6 @@ class Ship extends DynamicObject {
         };
 
         this.gameEngine.on('preStep', this.onPreStep);
-
-        let fireLoopTime = Math.round(250 + Math.random() * 100);
-        this.fireLoop = this.gameEngine.timer.loop(fireLoopTime, () => {
-            if (this.target && this.distanceToTargetSquared(this.target) < 160000) {
-                this.gameEngine.makeMissile(this);
-            }
-        });
     }
 
     shortestVector(p1, p2, wrapDist) {
@@ -79,8 +73,7 @@ class Ship extends DynamicObject {
         let closestDistance2 = Infinity;
         for (let objId of Object.keys(this.gameEngine.world.objects)) {
             let obj = this.gameEngine.world.objects[objId];
-            // if (obj != this) {
-            if (obj.class == UFO) {
+            if (obj.class === Food) {
                 let distance2 = this.distanceToTargetSquared(obj);
                 if (distance2 < closestDistance2) {
                     closestTarget = obj;
@@ -114,4 +107,4 @@ class Ship extends DynamicObject {
     }
 }
 
-module.exports = Ship;
+module.exports = Fish;
