@@ -453,7 +453,7 @@ class TapchanRenderer extends Renderer {
 }
 
 function getCentroid(objects) {
-    let maxDistance = 500; // max distance to add to the centroid
+    let maxDistance = 1000; // max distance to add to the centroid
     let shipCount = 0;
     let centroid = {x: 0, y: 0};
     let selectedShip = null;

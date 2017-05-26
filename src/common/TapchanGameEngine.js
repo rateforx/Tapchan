@@ -22,7 +22,7 @@ class TapchanGameEngine extends GameEngine {
 
         this.worldSettings = {
             worldWrap: true,
-            width: 1000,
+            width: 2000,
             height: 1000,
         };
 
