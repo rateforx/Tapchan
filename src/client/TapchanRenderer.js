@@ -4,11 +4,10 @@ const PIXI = require('pixi.js');
 const Renderer = require('lance-gg').render.Renderer;
 const Utils = require('./../common/Utils');
 
-// const Missile = require('../common/Missile');
-const Ship = require('../common/Fish');
+const Fish = require('../common/Fish');
 const Food = require('../common/Food');
 const ShipActor = require('./ShipActor');
-const UFO = require('../common/Mine');
+const Mine = require('../common/Mine');
 
 /**
  * Renderer for the Tapchan client - based on Pixi.js
@@ -24,7 +23,8 @@ class TapchanRenderer extends Renderer {
             bg3: 'assets/clouds2.png',
             bg4: 'assets/clouds1.png',
             smokeParticle: 'assets/smokeparticle.png',
-            pacman: 'assets/orzel.png',
+            pacman: 'assets/pacman.png',
+            orzel: 'assets/orzel.png',
             ghost: 'assets/ghost.png',
             wall: 'assets/wall.png',
             food: 'assets/food.png',
@@ -183,34 +183,34 @@ class TapchanRenderer extends Renderer {
             if (objData) {
 
                 // if the object requests a "showThrust" then invoke it in the actor
-                if ((sprite !== this.playerShip) && sprite.actor) {
+                if ((sprite !== this.playerFish) && sprite.actor) {
                     // sprite.actor.thrustEmitter.emit = !!objData.showThrust;
                 }
 
-                if (objData.class == Ship && sprite != this.playerShip) {
+                if (objData.class == Fish && sprite != this.playerFish) {
                     this.updateOffscreenIndicator(objData);
                 }
 
                 sprite.x = objData.position.x;
                 sprite.y = objData.position.y;
 
-                if (objData.class == Ship) {
+                if (objData.class == Fish) {
                     sprite.actor.shipContainerSprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
                 } else {
                     sprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
                 }
 
                 // make the wraparound seamless for objects other than the player ship
-                if (sprite != this.playerShip && viewportSeesLeftBound && objData.position.x > this.viewportWidth - this.camera.x) {
+                if (sprite != this.playerFish && viewportSeesLeftBound && objData.position.x > this.viewportWidth - this.camera.x) {
                     sprite.x = objData.position.x - worldWidth;
                 }
-                if (sprite != this.playerShip && viewportSeesRightBound && objData.position.x < -this.camera.x) {
+                if (sprite != this.playerFish && viewportSeesRightBound && objData.position.x < -this.camera.x) {
                     sprite.x = objData.position.x + worldWidth;
                 }
-                if (sprite != this.playerShip && viewportSeesTopBound && objData.position.y > this.viewportHeight - this.camera.y) {
+                if (sprite != this.playerFish && viewportSeesTopBound && objData.position.y > this.viewportHeight - this.camera.y) {
                     sprite.y = objData.position.y - worldHeight;
                 }
-                if (sprite != this.playerShip && viewportSeesBottomBound && objData.position.y < -this.camera.y) {
+                if (sprite != this.playerFish && viewportSeesBottomBound && objData.position.y < -this.camera.y) {
                     sprite.y = objData.position.y + worldHeight;
                 }
             }
@@ -226,8 +226,8 @@ class TapchanRenderer extends Renderer {
         }
 
         let cameraTarget;
-        if (this.playerShip) {
-            cameraTarget = this.playerShip;
+        if (this.playerFish) {
+            cameraTarget = this.playerFish;
             // this.cameraRoam = false;
         } else if (!this.gameStarted && !cameraTarget) {
 
@@ -298,7 +298,7 @@ class TapchanRenderer extends Renderer {
     addObject(objData, options) {
         let sprite;
 
-        if (objData.class == Ship) {
+        if (objData.class == Fish) {
             let shipActor = new ShipActor(this);
             sprite = shipActor.sprite;
             this.sprites[objData.id] = sprite;
@@ -307,7 +307,7 @@ class TapchanRenderer extends Renderer {
             if (this.clientEngine.isOwnedByPlayer(objData)) {
                 // let tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 4) + 16777215 / 2)).toString(16);
                 // sprite.actor.shipSprite.tint = tint; // color  player ship
-                this.playerShip = sprite; // save reference to the player ship
+                this.playerFish = sprite; // save reference to the player ship
                 document.body.classList.remove('lostGame');
                 if (!document.body.classList.contains('tutorialDone')) {
                     document.body.classList.add('tutorial');
@@ -328,15 +328,6 @@ class TapchanRenderer extends Renderer {
                 this.addOffscreenIndicator(objData);
             }
 
-        } else if (objData.class == Missile) {
-            sprite = new PIXI.Sprite(PIXI.loader.resources.missile.texture);
-            this.sprites[objData.id] = sprite;
-
-            sprite.width = 81 * 0.5;
-            sprite.height = 46 * 0.5;
-
-            sprite.anchor.set(0.5, 0.5);
-
         } else if (objData.class === Food) {
 
             let isSuper = objData.isSuper;
@@ -355,7 +346,7 @@ class TapchanRenderer extends Renderer {
 
             sprite.anchor.set(.5, .5);
 
-        } else if (objData.class === UFO) {
+        } else if (objData.class === Mine) {
 
             sprite = new PIXI.Sprite(PIXI.loader.resources.mine.texture);
             // texture.frame = new PIXI.Rectangle(0, 0, 80, 80);
@@ -376,11 +367,11 @@ class TapchanRenderer extends Renderer {
     }
 
     removeObject(obj) {
-        if (this.playerShip && obj.id == this.playerShip.id) {
-            this.playerShip = null;
+        if (this.playerFish && obj.id == this.playerFish.id) {
+            this.playerFish = null;
         }
 
-        if (obj.class == Ship && this.playerShip && obj.id != this.playerShip.id) {
+        if (obj.class == Fish && this.playerFish && obj.id != this.playerFish.id) {
             this.removeOffscreenIndicator(obj);
         }
 
@@ -427,14 +418,14 @@ class TapchanRenderer extends Renderer {
 
     updateOffscreenIndicator(objData) {
         // player ship might have been destroyed
-        if (!this.playerShip) return;
+        if (!this.playerFish) return;
 
         let indicatorEl = document.querySelector('#offscreenIndicator' + objData.id);
         if (!indicatorEl) {
             console.error(`No indicatorEl found with id ${objData.id}`);
             return;
         }
-        let playerShipObj = this.gameEngine.world.objects[this.playerShip.id];
+        let playerShipObj = this.gameEngine.world.objects[this.playerFish.id];
         let slope = (objData.position.y - playerShipObj.position.y) / (objData.position.x - playerShipObj.position.x);
         let b = this.viewportHeight / 2;
 
@@ -505,7 +496,7 @@ class TapchanRenderer extends Renderer {
             if (scoreEl == null) {
                 scoreEl = document.createElement('div');
                 scoreEl.classList.add('line');
-                if (this.playerShip && this.playerShip.id == parseInt(id)) scoreEl.classList.add('you');
+                if (this.playerFish && this.playerFish.id == parseInt(id)) scoreEl.classList.add('you');
                 scoreEl.dataset.objId = id;
                 scoreContainer.appendChild(scoreEl);
             }
@@ -533,9 +524,9 @@ class TapchanRenderer extends Renderer {
     }
 
     onKeyChange(e) {
-        if (this.playerShip) {
+        if (this.playerFish) {
             if (e.keyName === 'up') {
-                this.playerShip.actor.thrustEmitter.emit = e.isDown;
+                this.playerFish.actor.thrustEmitter.emit = e.isDown;
             }
         }
     }
@@ -579,7 +570,7 @@ function getCentroid(objects) {
 
     for (let id of Object.keys(objects)) {
         let obj = objects[id];
-        if (obj.class == Ship) {
+        if (obj.class == Fish) {
             if (selectedShip == null)
                 selectedShip = obj;
 

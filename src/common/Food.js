@@ -23,24 +23,9 @@ class Food extends DynamicObject {
     constructor(id, gameEngine, x, y, isSuper) {
         super(id, new TwoVector(x, y));
         this.gameEngine = gameEngine;
-        // if (isSuperfood !== undefined)
-            this.isSuper = isSuper;
-        /*Math.floor(Math.random()) > .5
-            ? this.isRotatingRight = true
-            : this.isRotatingLeft = true;
-        this.constRotation = this.isRotatingRight ? 'right' : 'left';*/
-        // this.constRotation = Math.floor(Math.random()) > .5 ? 'right' : 'left';
-        // this.rotationSpeed = Math.random() * 10 + 5;
+        this.isSuper = isSuper;
         this.class = Food;
-    }
-
-    setConstRotation() {
-        this.onPreStep = () => {
-            this.constRotation === 'right'
-                ? this.isRotatingRight = true
-                : this.isRotatingLeft = true;
-        };
-        this.gameEngine.on('preStep', this.onPreStep);
+        this.angle = Math.random() * 360 % 360;
     }
 }
 module.exports = Food;

@@ -27,10 +27,7 @@ class Fish extends DynamicObject {
     }
 
     constructor(id, gameEngine, x, y) {
-
-        //HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!HERE!
         super(id, x, y);
-        // super(id, new TwoVector(x, y));  //<-- Does not work like this
         this.class = Fish;
         this.gameEngine = gameEngine;
         this.showThrust = 0;

@@ -75,7 +75,7 @@ class TapchanClientEngine extends ClientEngine {
         this.gameEngine.on('fireMissile', () => { this.sounds.fireMissile.play(); });
         this.gameEngine.on('missileHit', () => {
             // don't play explosion sound if the player is not in game
-            if (this.renderer.playerShip) {
+            if (this.renderer.playerFish) {
                 this.sounds.missileHit.play();
             }
         });

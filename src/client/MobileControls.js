@@ -46,7 +46,7 @@ class MobileControls{
         this.touchContainer.addEventListener('touchmove', (e) =>{
             touchHandler(e);
             // if ingame prevent scrolling
-            if (this.renderer.playerShip) {
+            if (this.renderer.playerFish) {
                 e.preventDefault();
             }
         }, false);
@@ -73,7 +73,7 @@ class MobileControls{
         this.activeInput.left = false;
         this.activeInput.up = false;
 
-        let playerShip = this.renderer.playerShip;
+        let playerShip = this.renderer.playerFish;
         // no player ship, no movement
         if (!playerShip) return;
 

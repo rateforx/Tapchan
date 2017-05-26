@@ -38,7 +38,7 @@ class TapchanServerEngine extends ServerEngine {
             delete this.scoreData[e.fish.id];
             this.updateScore();
             this.gameEngine.destroyFish(e.fish.id);
-            this.gameEngine.destroyMine(e.mine.id);
+            // this.gameEngine.destroyMine(e.mine.id);
             setTimeout(() => this.gameEngine.makeMine(), 3000);
             if (e.fish.isBot) setTimeout(() => this.makeBot(), 5000);
         });

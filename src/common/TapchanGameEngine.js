@@ -82,7 +82,7 @@ class TapchanGameEngine extends GameEngine {
             } else if (inputData.input == 'left') {
                 playerShip.isRotatingLeft = true;
             } else if (inputData.input == 'space') {
-                //     this.makeMissile(playerShip, inputData.messageIndex);
+                //     this.makeMissile(playerFish, inputData.messageIndex);
                 //     this.emit('fireMissile');
             }
         }
@@ -122,13 +122,13 @@ class TapchanGameEngine extends GameEngine {
 
         return mine;
     }
-    /*makeMissile(playerShip, inputId) {
+    /*makeMissile(playerFish, inputId) {
      let missile = new Missile(++this.world.idCount);
-     missile.position.copy(playerShip.position);
-     missile.velocity.copy(playerShip.velocity);
-     missile.angle = playerShip.angle;
-     missile.playerId = playerShip.playerId;
-     missile.ownerId = playerShip.id;
+     missile.position.copy(playerFish.position);
+     missile.velocity.copy(playerFish.velocity);
+     missile.angle = playerFish.angle;
+     missile.playerId = playerFish.playerId;
+     missile.ownerId = playerFish.id;
      missile.inputId = inputId;
      missile.velocity.x += Math.cos(missile.angle * (Math.PI / 180)) * 10;
      missile.velocity.y += Math.sin(missile.angle * (Math.PI / 180)) * 10;
