@@ -82,7 +82,7 @@ class MobileControls{
         let dx = this.currentTouch.x - playerShipScreenCoords.x;
         let dy = this.currentTouch.y - playerShipScreenCoords.y;
         let shortestArc = Utils.shortestArc(Math.atan2(dx, -dy),
-            Math.atan2(Math.sin(playerShip.actor.shipContainerSprite.rotation + Math.PI / 2), Math.cos(playerShip.actor.shipContainerSprite.rotation + Math.PI / 2)));
+            Math.atan2(Math.sin(playerShip.actor.fishContainerSprite.rotation + Math.PI / 2), Math.cos(playerShip.actor.fishContainerSprite.rotation + Math.PI / 2)));
 
         let rotateThreshold = 0.3;
         let distanceThreshold = 120;

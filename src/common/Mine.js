@@ -12,13 +12,10 @@ class Mine extends DynamicObject {
 
     get bendingAngleLocalMultiple() { return 0.0; }
 
-    constructor(id, gameEngine, x, y) {
-        super(id, new TwoVector(x, y));
+    constructor(id, position) {
+        super(id, position);
         this.class = Mine;
-        this.gameEngine = gameEngine;
         this.angle = Math.random() * 360;
-
-        // this.velocity.set(Math.random() * 10, Math.random() * 10);
     }
 }
 module.exports = Mine;

@@ -9,13 +9,12 @@ class ShipActor {
         this.gameEngine = renderer.gameEngine;
         this.backLayer = renderer.layer1;
         this.sprite = new PIXI.Container();
-        this.shipContainerSprite = new PIXI.Container();
+        this.fishContainerSprite = new PIXI.Container();
 
         this.fishSprite = new PIXI.Sprite(PIXI.loader.resources.whale.texture);
 
         //keep a reference to the actor from the sprite
         this.sprite.actor = this;
-
 
         this.fishSprite.anchor.set(.5, .5);
         this.fishSprite.width = 100;
@@ -23,19 +22,19 @@ class ShipActor {
 
 
         this.addThrustEmitter();
-        this.sprite.addChild(this.shipContainerSprite);
-        this.shipContainerSprite.addChild(this.fishSprite);
+        this.sprite.addChild(this.fishContainerSprite);
+        this.fishContainerSprite.addChild(this.fishSprite);
     }
 
     renderStep(delta) {
         if (this.thrustEmitter) {
             this.thrustEmitter.update(delta * 0.001);
 
-            this.thrustEmitter.spawnPos.x = this.sprite.x - Math.cos(-this.shipContainerSprite.rotation) * 4;
-            this.thrustEmitter.spawnPos.y = this.sprite.y + Math.sin(-this.shipContainerSprite.rotation) * 4;
+            this.thrustEmitter.spawnPos.x = this.sprite.x - Math.cos(-this.fishContainerSprite.rotation) * 4;
+            this.thrustEmitter.spawnPos.y = this.sprite.y + Math.sin(-this.fishContainerSprite.rotation) * 4;
 
-            this.thrustEmitter.minStartRotation = this.shipContainerSprite.rotation * 180 / Math.PI + 180 - 1;
-            this.thrustEmitter.maxStartRotation = this.shipContainerSprite.rotation * 180 / Math.PI + 180 + 1;
+            this.thrustEmitter.minStartRotation = this.fishContainerSprite.rotation * 180 / Math.PI + 180 - 1;
+            this.thrustEmitter.maxStartRotation = this.fishContainerSprite.rotation * 180 / Math.PI + 180 + 1;
         }
         if (this.explosionEmitter) {
             this.explosionEmitter.update(delta * 0.001);
@@ -52,7 +51,7 @@ class ShipActor {
         this.thrustEmitter.emit = false;
 
         this.explosionEmitter = new PIXI.particles.Emitter(
-            this.shipContainerSprite,
+            this.fishContainerSprite,
             [PIXI.loader.resources.bubble.texture],
             ExplosionEmitterConfig
         );
@@ -64,7 +63,7 @@ class ShipActor {
         if (this.nameText !== null) {
             this.nameText.destroy();
         }
-        this.nameText = new PIXI.Text(name, {fontFamily: "arial", fontSize: "12px", fill: "white"});
+        this.nameText = new PIXI.Text(name, {fontFamily: "arial", fontSize: "14px", fill: "white"});
         this.nameText.anchor.set(0.5, 0.5);
         this.nameText.y = -40;
         this.nameText.alpha = 0.3;
@@ -82,7 +81,7 @@ class ShipActor {
             this.fishSprite.destroy();
 
             setTimeout(() => {
-                this.shipContainerSprite.destroy();
+                this.fishContainerSprite.destroy();
                 this.explosionEmitter.destroy();
                 resolve();
             }, 3000);

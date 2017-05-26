@@ -143,7 +143,7 @@ class TapchanRenderer extends Renderer {
                 sprite.y = objData.position.y;
 
                 if (objData.class === Fish) {
-                    sprite.actor.shipContainerSprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
+                    sprite.actor.fishContainerSprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
                 } else {
                     sprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
                 }
@@ -227,15 +227,6 @@ class TapchanRenderer extends Renderer {
 
         this.background.tilePosition.x = bgOffsetX * 0.01;
         this.background.tilePosition.y = bgOffsetY * 0.01;
-
-        this.bg2.tilePosition.x = bgOffsetX * 0.04;
-        this.bg2.tilePosition.y = bgOffsetY * 0.04;
-
-        this.bg3.tilePosition.x = bgOffsetX * 0.3;
-        this.bg3.tilePosition.y = bgOffsetY * 0.3;
-
-        this.bg4.tilePosition.x = bgOffsetX * 0.75;
-        this.bg4.tilePosition.y = bgOffsetY * 0.75;
 
         this.elapsedTime = now;
 

@@ -26,8 +26,8 @@ class Fish extends DynamicObject {
         this.showThrust = other.showThrust;
     }
 
-    constructor(id, gameEngine, x, y) {
-        super(id, x, y);
+    constructor(id, gameEngine, position) {
+        super(id, position);
         this.class = Fish;
         this.gameEngine = gameEngine;
         this.showThrust = 0;

@@ -20,9 +20,8 @@ class Food extends DynamicObject {
         return s + `Food::${super.toString()}`;
     }
 
-    constructor(id, gameEngine, x, y, isSuper) {
-        super(id, new TwoVector(x, y));
-        this.gameEngine = gameEngine;
+    constructor(id, position, isSuper) {
+        super(id, position);
         this.isSuper = isSuper;
         this.class = Food;
         this.angle = Math.random() * 360;

@@ -28,7 +28,7 @@ class TapchanGameEngine extends GameEngine {
 
         this.on('collisionStart', (e) => {
             let collisionObjects = Object.keys(e).map(k => e[k]);
-            console.log(`COLLISION:\n ${Object.keys(e)}\n${collisionObjects}`);
+            // console.log(`COLLISION:\n ${Object.keys(e)}\n${collisionObjects}`);
 
             let fish = collisionObjects.find(o => o.class === Fish);
             let food = collisionObjects.find(o => o.class === Food);
@@ -88,58 +88,37 @@ class TapchanGameEngine extends GameEngine {
     };
 
     makeFish(playerId) {
-        let newShipX = Math.floor(Math.random() * (this.worldSettings.width - 200)) + 200;
-        let newShipY = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
+        let x = Math.floor(Math.random() * (this.worldSettings.width - 50) + 50);
+        let y = Math.floor(Math.random() * (this.worldSettings.height - 50) + 50);
 
-        let fish = new Fish(++this.world.idCount, this, new TwoVector(newShipX, newShipY));
+        let fish = new Fish(++this.world.idCount, this, new TwoVector(x, y));
         fish.playerId = playerId;
         this.addObjectToWorld(fish);
-        console.log(`ship added: ${fish.toString()}`);
+        console.log(`+++${fish.toString()}`);
 
         return fish;
     };
     makeFood() {
-        let x = Math.floor(Math.random() * (this.worldSettings.width - 200)) + 200;
-        let y = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
+        let x = Math.floor(Math.random() * (this.worldSettings.width - 50) + 50);
+        let y = Math.floor(Math.random() * (this.worldSettings.height - 50) + 50);
 
-        // let food = new Food(++this.world.idCount, this, x, y);
         let isSuper = Math.random() > .9;
-        let food = new Food(++this.world.idCount, this, x, y, isSuper);
-        // food.setConstRotation();
+        let food = new Food(++this.world.idCount, new TwoVector(x, y), isSuper);
         this.addObjectToWorld(food);
-        console.log(`food added: ${food.toString()}`);
+        console.log(`+++${food.toString()}`);
 
         return food;
     }
     makeMine() {
-        let x = Math.floor(Math.random() * (this.worldSettings.width - 200)) + 200;
-        let y = Math.floor(Math.random() * (this.worldSettings.height - 200)) + 200;
+        let x = Math.floor(Math.random() * (this.worldSettings.width - 50) + 50);
+        let y = Math.floor(Math.random() * (this.worldSettings.height - 50) + 50);
 
-        let mine = new Mine(++this.world.idCount, this, x, y);
+        let mine = new Mine(++this.world.idCount, new TwoVector(x, y));
         mine = this.addObjectToWorld(mine);
-        console.log(`ufo added: ${mine.toString()}`);
+        console.log(`+++${mine.toString()}`);
 
         return mine;
     }
-    /*makeMissile(playerFish, inputId) {
-     let missile = new Missile(++this.world.idCount);
-     missile.position.copy(playerFish.position);
-     missile.velocity.copy(playerFish.velocity);
-     missile.angle = playerFish.angle;
-     missile.playerId = playerFish.playerId;
-     missile.ownerId = playerFish.id;
-     missile.inputId = inputId;
-     missile.velocity.x += Math.cos(missile.angle * (Math.PI / 180)) * 10;
-     missile.velocity.y += Math.sin(missile.angle * (Math.PI / 180)) * 10;
-
-     this.trace.trace(`missile[${missile.id}] created vel=${missile.velocity}`);
-
-     let obj = this.addObjectToWorld(missile);
-     if (obj)
-     this.timer.add(40, this.destroyMissile, this, [obj.id]);
-
-     return missile;
-     }*/
 
     destroyFood(foodId) {
         if (this.world.objects[foodId] && this.world.objects[foodId].class === Food) {
@@ -155,12 +134,6 @@ class TapchanGameEngine extends GameEngine {
         if (this.world.objects[mineId] && this.world.objects[mineId].class === Mine)
             this.removeObjectFromWorld(mineId);
     }
-    /*destroyMissile(missileId) {
-     if (this.world.objects[missileId] && this.world.objects[missileId].class === Missile) {
-     this.trace.trace(`missile[${missileId}] destroyed`);
-     this.removeObjectFromWorld(missileId);
-     }
-     }*/
 
 }
 
