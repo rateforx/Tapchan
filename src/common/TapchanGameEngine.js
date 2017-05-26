@@ -73,14 +73,14 @@ class TapchanGameEngine extends GameEngine {
         }
 
         if (playerFish) {
-            if (inputData.input == 'up') {
+            if (inputData.input === 'up') {
                 playerFish.isAccelerating = true;
                 playerFish.showThrust = 5; // show thrust for next steps.
-            } else if (inputData.input == 'right') {
+            } else if (inputData.input === 'right') {
                 playerFish.isRotatingRight = true;
-            } else if (inputData.input == 'left') {
+            } else if (inputData.input === 'left') {
                 playerFish.isRotatingLeft = true;
-            } else if (inputData.input == 'space') {
+            } else if (inputData.input === 'space') {
                 //     this.makeMissile(playerFish, inputData.messageIndex);
                 //     this.emit('fireMissile');
             }

@@ -19,6 +19,10 @@ class TapchanRenderer extends Renderer {
             smokeParticle: 'assets/smokeparticle.png',
             food: 'assets/food.png',
             mine: 'assets/mine.png',
+            mine0: 'assets/mine0.png',
+            mine1: 'assets/mine1.png',
+            mine2: 'assets/mine2.png',
+            mine3: 'assets/mine3.png',
             whale: 'assets/whale.png',
             bubble: 'assets/bubble.png',
             water: 'assets/water.png',
@@ -285,11 +289,25 @@ class TapchanRenderer extends Renderer {
 
         } else if (objData.class === Mine) {
 
-            sprite = new PIXI.Sprite(PIXI.loader.resources.mine.texture);
+            // sprite = new PIXI.Sprite(PIXI.loader.resources.mine.texture);
+
+            let between = (x, min, max) => {
+                return x >= min && x < max;
+            };
+
+            let r = Math.random();
+            if (between(r, 0, .25))
+                sprite = new PIXI.Sprite(PIXI.loader.resources.mine0.texture);
+            if (between(r, .25, .5))
+                sprite = new PIXI.Sprite(PIXI.loader.resources.mine1.texture);
+            if (between(r, .5, .75))
+                sprite = new PIXI.Sprite(PIXI.loader.resources.mine2.texture);
+            if (between(r, .75, 1))
+                sprite = new PIXI.Sprite(PIXI.loader.resources.mine3.texture);
 
             sprite.width = 60;
-
             sprite.height = 60;
+
             sprite.anchor.set(.5, .5);
 
             this.sprites[objData.id] = sprite;
