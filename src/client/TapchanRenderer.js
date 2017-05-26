@@ -16,19 +16,8 @@ class TapchanRenderer extends Renderer {
 
     get ASSETPATHS() {
         return {
-            ship: 'assets/ship1.png',
-            missile: 'assets/shot.png',
-            bg1: 'assets/space3.png',
-            bg2: 'assets/space2.png',
-            bg3: 'assets/clouds2.png',
-            bg4: 'assets/clouds1.png',
             smokeParticle: 'assets/smokeparticle.png',
-            pacman: 'assets/pacman.png',
-            orzel: 'assets/orzel.png',
-            ghost: 'assets/ghost.png',
-            wall: 'assets/wall.png',
             food: 'assets/food.png',
-            dove: 'assets/dove.png',
             mine: 'assets/mine.png',
             whale: 'assets/whale.png',
             bubble: 'assets/bubble.png',
@@ -78,15 +67,6 @@ class TapchanRenderer extends Renderer {
                     this.isReady = true;
                     this.setupStage();
                     this.gameEngine.emit('renderer.ready');
-
-                    if (Utils.isTouchDevice()) {
-                        document.body.classList.add('touch');
-                    } else if (isMacintosh()) {
-                        document.body.classList.add('mac');
-                    } else if (isWindows()) {
-                        document.body.classList.add('pc');
-                    }
-
                     resolve();
                 });
         });
@@ -107,32 +87,10 @@ class TapchanRenderer extends Renderer {
         this.camera.addChild(this.layer1, this.layer2);
 
         // parallax background
-        this.bg1 = new PIXI.extras.TilingSprite(PIXI.loader.resources.water.texture,
+        this.background = new PIXI.extras.TilingSprite(PIXI.loader.resources.water.texture,
             this.viewportWidth, this.viewportHeight);
-        this.bg2 = new PIXI.extras.TilingSprite(PIXI.loader.resources.bg2.texture,
-            this.viewportWidth, this.viewportHeight);
-        this.bg3 = new PIXI.extras.TilingSprite(PIXI.loader.resources.bg3.texture,
-            this.viewportWidth, this.viewportHeight);
-        this.bg4 = new PIXI.extras.TilingSprite(PIXI.loader.resources.bg4.texture,
-            this.viewportWidth, this.viewportHeight);
-
-        this.bg3.blendMode = PIXI.BLEND_MODES.ADD;
-        this.bg4.blendMode = PIXI.BLEND_MODES.ADD;
-
-        this.bg4.alpha = 0.6;
-
-        // this.stage.addChild(this.bg1, this.bg2, this.bg3, this.bg4);
-        this.stage.addChild(this.bg1);
+        this.stage.addChild(this.background);
         this.stage.addChild(this.camera);
-
-        // this.debug = new PIXI.Graphics();
-        // this.camera.addChild(this.debug);
-
-        // this.debugText = new PIXI.Text('DEBUG', {fontFamily: "arial", fontSize: "100px", fill: "white"});
-        // this.debugText.anchor.set(0.5, 0.5);
-        // this.debugText.x = this.gameEngine.worldSettings.width / 2;
-        // this.debugText.y = this.gameEngine.worldSettings.height / 2;
-        // this.camera.addChild(this.debugText);
 
         this.elapsedTime = Date.now();
         // debug
@@ -150,14 +108,8 @@ class TapchanRenderer extends Renderer {
         this.viewportWidth = window.innerWidth;
         this.viewportHeight = window.innerHeight;
 
-        this.bg1.width = this.viewportWidth;
-        this.bg1.height = this.viewportHeight;
-        this.bg2.width = this.viewportWidth;
-        this.bg2.height = this.viewportHeight;
-        this.bg3.width = this.viewportWidth;
-        this.bg3.height = this.viewportHeight;
-        this.bg4.width = this.viewportWidth;
-        this.bg4.height = this.viewportHeight;
+        this.background.width = this.viewportWidth;
+        this.background.height = this.viewportHeight;
 
         this.renderer.resize(this.viewportWidth, this.viewportHeight);
     }
@@ -187,30 +139,26 @@ class TapchanRenderer extends Renderer {
                     // sprite.actor.thrustEmitter.emit = !!objData.showThrust;
                 }
 
-                if (objData.class == Fish && sprite != this.playerFish) {
-                    this.updateOffscreenIndicator(objData);
-                }
-
                 sprite.x = objData.position.x;
                 sprite.y = objData.position.y;
 
-                if (objData.class == Fish) {
+                if (objData.class === Fish) {
                     sprite.actor.shipContainerSprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
                 } else {
                     sprite.rotation = this.gameEngine.world.objects[objId].angle * Math.PI / 180;
                 }
 
                 // make the wraparound seamless for objects other than the player ship
-                if (sprite != this.playerFish && viewportSeesLeftBound && objData.position.x > this.viewportWidth - this.camera.x) {
+                if (sprite !== this.playerFish && viewportSeesLeftBound && objData.position.x > this.viewportWidth - this.camera.x) {
                     sprite.x = objData.position.x - worldWidth;
                 }
-                if (sprite != this.playerFish && viewportSeesRightBound && objData.position.x < -this.camera.x) {
+                if (sprite !== this.playerFish && viewportSeesRightBound && objData.position.x < -this.camera.x) {
                     sprite.x = objData.position.x + worldWidth;
                 }
-                if (sprite != this.playerFish && viewportSeesTopBound && objData.position.y > this.viewportHeight - this.camera.y) {
+                if (sprite !== this.playerFish && viewportSeesTopBound && objData.position.y > this.viewportHeight - this.camera.y) {
                     sprite.y = objData.position.y - worldHeight;
                 }
-                if (sprite != this.playerFish && viewportSeesBottomBound && objData.position.y < -this.camera.y) {
+                if (sprite !== this.playerFish && viewportSeesBottomBound && objData.position.y < -this.camera.y) {
                     sprite.y = objData.position.y + worldHeight;
                 }
             }
@@ -277,8 +225,8 @@ class TapchanRenderer extends Renderer {
         let bgOffsetX = this.bgPhaseX * worldWidth + this.camera.x;
         let bgOffsetY = this.bgPhaseY * worldHeight + this.camera.y;
 
-        this.bg1.tilePosition.x = bgOffsetX * 0.01;
-        this.bg1.tilePosition.y = bgOffsetY * 0.01;
+        this.background.tilePosition.x = bgOffsetX * 0.01;
+        this.background.tilePosition.y = bgOffsetY * 0.01;
 
         this.bg2.tilePosition.x = bgOffsetX * 0.04;
         this.bg2.tilePosition.y = bgOffsetY * 0.04;
@@ -298,15 +246,13 @@ class TapchanRenderer extends Renderer {
     addObject(objData, options) {
         let sprite;
 
-        if (objData.class == Fish) {
+        if (objData.class === Fish) {
             let shipActor = new ShipActor(this);
             sprite = shipActor.sprite;
             this.sprites[objData.id] = sprite;
             sprite.id = objData.id;
 
             if (this.clientEngine.isOwnedByPlayer(objData)) {
-                // let tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 4) + 16777215 / 2)).toString(16);
-                // sprite.actor.shipSprite.tint = tint; // color  player ship
                 this.playerFish = sprite; // save reference to the player ship
                 document.body.classList.remove('lostGame');
                 if (!document.body.classList.contains('tutorialDone')) {
@@ -325,9 +271,9 @@ class TapchanRenderer extends Renderer {
                     document.body.classList.remove('tutorial');
                 }, 10000);
             } else {
-                this.addOffscreenIndicator(objData);
+                let tint = '0x' + (Math.floor(((Math.random() * 16777215 ) / 4) + 16777215 / 2)).toString(16);
+                sprite.actor.fishSprite.tint = tint; // color  player ship
             }
-
         } else if (objData.class === Food) {
 
             let isSuper = objData.isSuper;
@@ -349,8 +295,6 @@ class TapchanRenderer extends Renderer {
         } else if (objData.class === Mine) {
 
             sprite = new PIXI.Sprite(PIXI.loader.resources.mine.texture);
-            // texture.frame = new PIXI.Rectangle(0, 0, 80, 80);
-            // sprite = new PIXI.Sprite(texture);
 
             sprite.width = 60;
             sprite.height = 60;
@@ -367,12 +311,8 @@ class TapchanRenderer extends Renderer {
     }
 
     removeObject(obj) {
-        if (this.playerFish && obj.id == this.playerFish.id) {
+        if (this.playerFish && obj.id === this.playerFish.id) {
             this.playerFish = null;
-        }
-
-        if (obj.class == Fish && this.playerFish && obj.id != this.playerFish.id) {
-            this.removeOffscreenIndicator(obj);
         }
 
         let sprite = this.sprites[obj.id];
@@ -408,67 +348,6 @@ class TapchanRenderer extends Renderer {
         this.lookingAt.y = targetY;
     }
 
-    addOffscreenIndicator(objData) {
-        let container = document.querySelector('#offscreenIndicatorContainer');
-        let indicatorEl = document.createElement('div');
-        indicatorEl.setAttribute('id', 'offscreenIndicator' + objData.id);
-        indicatorEl.classList.add('offscreenIndicator');
-        container.appendChild(indicatorEl);
-    }
-
-    updateOffscreenIndicator(objData) {
-        // player ship might have been destroyed
-        if (!this.playerFish) return;
-
-        let indicatorEl = document.querySelector('#offscreenIndicator' + objData.id);
-        if (!indicatorEl) {
-            console.error(`No indicatorEl found with id ${objData.id}`);
-            return;
-        }
-        let playerShipObj = this.gameEngine.world.objects[this.playerFish.id];
-        let slope = (objData.position.y - playerShipObj.position.y) / (objData.position.x - playerShipObj.position.x);
-        let b = this.viewportHeight / 2;
-
-        // this.debug.clear();
-        // this.debug.lineStyle(1, 0xFF0000 ,1);
-        // this.debug.moveTo(this.viewportWidth/2,this.viewportHeight/2);
-        // this.debug.lineTo(this.viewportWidth/2 + b/-slope, 0);
-        // this.debug.endFill();
-
-        let padding = 30;
-        let indicatorPos = {x: 0, y: 0};
-
-        if (objData.position.y < playerShipObj.position.y - this.viewportHeight / 2) {
-            indicatorPos.x = this.viewportWidth / 2 + (padding - b) / slope;
-            indicatorPos.y = padding;
-        } else if (objData.position.y > playerShipObj.position.y + this.viewportHeight / 2) {
-            indicatorPos.x = this.viewportWidth / 2 + (this.viewportHeight - padding - b) / slope;
-            indicatorPos.y = this.viewportHeight - padding;
-        }
-
-        if (objData.position.x < playerShipObj.position.x - this.viewportWidth / 2) {
-            indicatorPos.x = padding;
-            indicatorPos.y = slope * (-this.viewportWidth / 2 + padding) + b;
-        } else if (objData.position.x > playerShipObj.position.x + this.viewportWidth / 2) {
-            indicatorPos.x = this.viewportWidth - padding;
-            indicatorPos.y = slope * (this.viewportWidth / 2 - padding) + b;
-        }
-
-        if (indicatorPos.x == 0 && indicatorPos.y == 0) {
-            indicatorEl.style.opacity = 0;
-        } else {
-            indicatorEl.style.opacity = 1;
-            let rotation = Math.atan2(objData.position.y - playerShipObj.position.y, objData.position.x - playerShipObj.position.x);
-            rotation = rotation * 180 / Math.PI; // rad2deg
-            indicatorEl.style.transform = `translateX(${indicatorPos.x}px) translateY(${indicatorPos.y}px) rotate(${rotation}deg) `;
-        }
-    }
-
-    removeOffscreenIndicator(objData) {
-        let indicatorEl = document.querySelector('#offscreenIndicator' + objData.id);
-        indicatorEl.parentNode.removeChild(indicatorEl);
-    }
-
     updateHUD(data) {
         if (data.RTT) {
             qs('.latencyData').innerHTML = data.RTT;
@@ -485,7 +364,7 @@ class TapchanRenderer extends Renderer {
         // remove score lines with objects that don't exist anymore
         let scoreEls = scoreContainer.querySelectorAll('.line');
         for (let x = 0; x < scoreEls.length; x++) {
-            if (data[scoreEls[x].dataset.objId] == null) {
+            if (data[scoreEls[x].dataset.objId] === null) {
                 scoreEls[x].parentNode.removeChild(scoreEls[x]);
             }
         }
@@ -493,10 +372,10 @@ class TapchanRenderer extends Renderer {
         for (let id of Object.keys(data)) {
             let scoreEl = scoreContainer.querySelector(`[data-obj-id='${id}']`);
             // create score line if it doesn't exist
-            if (scoreEl == null) {
+            if (scoreEl === null) {
                 scoreEl = document.createElement('div');
                 scoreEl.classList.add('line');
-                if (this.playerFish && this.playerFish.id == parseInt(id)) scoreEl.classList.add('you');
+                if (this.playerFish && this.playerFish.id === parseInt(id)) scoreEl.classList.add('you');
                 scoreEl.dataset.objId = id;
                 scoreContainer.appendChild(scoreEl);
             }
@@ -570,12 +449,12 @@ function getCentroid(objects) {
 
     for (let id of Object.keys(objects)) {
         let obj = objects[id];
-        if (obj.class == Fish) {
-            if (selectedShip == null)
+        if (obj.class === Fish) {
+            if (selectedShip === null)
                 selectedShip = obj;
 
             let objDistance = Math.sqrt(Math.pow((selectedShip.position.x - obj.position.y), 2) + Math.pow((selectedShip.position.y - obj.position.y), 2));
-            if (selectedShip == obj || objDistance < maxDistance) {
+            if (selectedShip === obj || objDistance < maxDistance) {
                 centroid.x += obj.position.x;
                 centroid.y += obj.position.y;
                 shipCount++;
@@ -585,7 +464,6 @@ function getCentroid(objects) {
 
     centroid.x /= shipCount;
     centroid.y /= shipCount;
-
 
     return centroid;
 }

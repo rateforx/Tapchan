@@ -1,4 +1,3 @@
-const Howler = require('howler'); // eslint-disable-line no-unused-vars
 const ClientEngine = require('lance-gg').ClientEngine;
 const TapchanRenderer = require('./TapchanRenderer');
 const MobileControls = require('../client/MobileControls');
@@ -11,7 +10,6 @@ class TapchanClientEngine extends ClientEngine {
         super(gameEngine, options, TapchanRenderer);
 
         this.serializer.registerClass(require('../common/Fish'));
-        this.serializer.registerClass(require('../common/Missile'));
         this.serializer.registerClass(require('../common/Food'));
         this.serializer.registerClass(require('../common/Mine'));
 
@@ -65,12 +63,6 @@ class TapchanClientEngine extends ClientEngine {
 
         // allow a custom path for sounds
         let assetPathPrefix = this.options.assetPathPrefix ? this.options.assetPathPrefix : '';
-
-        // handle sounds
-        this.sounds = {
-            missileHit: new Howl({ src: [assetPathPrefix + 'assets/audio/193429__unfa__projectile-hit.mp3'] }),
-            fireMissile: new Howl({ src: [assetPathPrefix + 'assets/audio/248293__chocobaggy__weird-laser-gun.mp3'] })
-        };
 
         this.gameEngine.on('fireMissile', () => { this.sounds.fireMissile.play(); });
         this.gameEngine.on('missileHit', () => {

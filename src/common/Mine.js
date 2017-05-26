@@ -16,6 +16,7 @@ class Mine extends DynamicObject {
         super(id, new TwoVector(x, y));
         this.class = Mine;
         this.gameEngine = gameEngine;
+        this.angle = Math.random() * 360;
 
         // this.velocity.set(Math.random() * 10, Math.random() * 10);
     }

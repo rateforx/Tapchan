@@ -11,20 +11,20 @@ class ShipActor {
         this.sprite = new PIXI.Container();
         this.shipContainerSprite = new PIXI.Container();
 
-        this.shipSprite = new PIXI.Sprite(PIXI.loader.resources.whale.texture);
+        this.fishSprite = new PIXI.Sprite(PIXI.loader.resources.whale.texture);
 
         //keep a reference to the actor from the sprite
         this.sprite.actor = this;
 
 
-        this.shipSprite.anchor.set(.5, .5);
-        this.shipSprite.width = 100;
-        this.shipSprite.height = 50;
+        this.fishSprite.anchor.set(.5, .5);
+        this.fishSprite.width = 100;
+        this.fishSprite.height = 50;
 
 
         this.addThrustEmitter();
         this.sprite.addChild(this.shipContainerSprite);
-        this.shipContainerSprite.addChild(this.shipSprite);
+        this.shipContainerSprite.addChild(this.fishSprite);
     }
 
     renderStep(delta) {
@@ -61,7 +61,7 @@ class ShipActor {
     }
 
     changeName(name) {
-        if (this.nameText != null) {
+        if (this.nameText !== null) {
             this.nameText.destroy();
         }
         this.nameText = new PIXI.Text(name, {fontFamily: "arial", fontSize: "12px", fill: "white"});
@@ -79,7 +79,7 @@ class ShipActor {
                 this.nameText.destroy();
             this.thrustEmitter.destroy();
             this.thrustEmitter = null;
-            this.shipSprite.destroy();
+            this.fishSprite.destroy();
 
             setTimeout(() => {
                 this.shipContainerSprite.destroy();

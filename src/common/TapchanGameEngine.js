@@ -2,7 +2,6 @@
 
 const GameEngine = require('lance-gg').GameEngine;
 
-const Missile = require('./Missile');
 const Fish = require('./Fish');
 const Food = require('./Food');
 const Mine = require('./Mine');

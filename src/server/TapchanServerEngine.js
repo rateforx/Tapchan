@@ -67,7 +67,7 @@ class TapchanServerEngine extends ServerEngine {
         // iterate through all objects, delete those that are associated with the player
         for (let objId of Object.keys(this.gameEngine.world.objects)) {
             let obj = this.gameEngine.world.objects[objId];
-            if (obj.playerId == playerId) {
+            if (obj.playerId === playerId) {
                 // remove score data
                 if (this.scoreData[objId]) {
                     delete this.scoreData[objId];

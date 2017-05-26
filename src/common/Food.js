@@ -25,7 +25,7 @@ class Food extends DynamicObject {
         this.gameEngine = gameEngine;
         this.isSuper = isSuper;
         this.class = Food;
-        this.angle = Math.random() * 360 % 360;
+        this.angle = Math.random() * 360;
     }
 }
 module.exports = Food;
