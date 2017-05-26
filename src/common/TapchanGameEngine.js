@@ -39,7 +39,7 @@ class TapchanGameEngine extends GameEngine {
                 this.emit('foodEaten', { food, fish });
 
             } else if (fish && mine) {
-                // this.destroyMine(mine.id);
+                this.destroyMine(mine.id);
                 this.emit('playerHit', { fish, mine });
             }
         });

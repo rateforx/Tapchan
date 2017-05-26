@@ -307,6 +307,7 @@ class TapchanRenderer extends Renderer {
         }
 
         let sprite = this.sprites[obj.id];
+        if (!sprite) return;
         if (sprite.actor) {
             // removal "takes time"
             sprite.actor.destroy().then(() => {

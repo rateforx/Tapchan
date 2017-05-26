@@ -60,7 +60,7 @@ class ShipActor {
     }
 
     changeName(name) {
-        if (this.nameText !== null) {
+        if (this.nameText) {
             this.nameText.destroy();
         }
         this.nameText = new PIXI.Text(name, {fontFamily: "arial", fontSize: "14px", fill: "white"});

@@ -3,8 +3,8 @@
 const ServerEngine = require('lance-gg').ServerEngine;
 const nameGenerator = require('./NameGenerator');
 const NUM_BOTS = 10;
-const NUM_FOOD = 100;
-const NUM_MINES = 40;
+const NUM_FOOD = 20;
+const NUM_MINES = 20;
 
 class TapchanServerEngine extends ServerEngine {
     constructor(io, gameEngine, inputOptions) {
