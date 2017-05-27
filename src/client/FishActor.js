@@ -51,9 +51,11 @@ class FishActor {
         this.thrustEmitter.emit = false;
 
         this.explosionEmitter = new PIXI.particles.Emitter(
-            this.fishContainerSprite,
-            [PIXI.loader.resources.bubble.texture],
-            ExplosionEmitterConfig
+            this.fishContainerSprite, [
+                PIXI.loader.resources.bone.texture,
+                PIXI.loader.resources.brain.texture,
+                PIXI.loader.resources.tooth.texture,
+            ], ExplosionEmitterConfig
         );
 
         this.explosionEmitter.emit = false;

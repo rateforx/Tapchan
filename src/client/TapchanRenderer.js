@@ -26,6 +26,9 @@ class TapchanRenderer extends Renderer {
             whale: 'assets/whale.png',
             bubble: 'assets/bubble.png',
             water: 'assets/water.png',
+            bone: 'assets/bone.png',
+            brain: 'assets/brain.png',
+            tooth: 'assets/tooth.png',
         };
     }
 
