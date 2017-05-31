@@ -3,9 +3,10 @@
 const ServerEngine = require('lance-gg').ServerEngine;
 const nameGenerator = require('./NameGenerator');
 
-const START_BOTS = 3;
-const START_FOOD = 20;
-const NUM_MINES = 20;
+const START_BOTS =
+    3;
+const START_FOOD = 50;
+const NUM_MINES = 25;
 
 class TapchanServerEngine extends ServerEngine {
 
@@ -44,6 +45,10 @@ class TapchanServerEngine extends ServerEngine {
             this.gameEngine.destroyMine(e.mine.id);
             setTimeout(() => this.gameEngine.makeMine(), 3000);
             if (e.fish.isBot) setTimeout(() => this.makeBot(), 5000);
+        });
+
+        this.gameEngine.on('fishy', e => {
+            //when the fishies touchy touchy
         });
     }
 
@@ -98,6 +103,7 @@ class TapchanServerEngine extends ServerEngine {
         // delay so player socket can catch up
         setTimeout(() => {
             this.io.sockets.emit('scoreUpdate', this.scoreData);
+            // console.log(this.scoreData);
         }, 1000);
 
     }

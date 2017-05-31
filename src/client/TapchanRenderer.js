@@ -9,6 +9,8 @@ const Food = require('../common/Food');
 const ShipActor = require('./FishActor');
 const Mine = require('../common/Mine');
 
+const FloatingBubblesEmitterConfig = require('./FloatingBubblesEmitter.json');
+
 /**
  * Renderer for the Tapchan client - based on Pixi.js
  */
@@ -72,6 +74,16 @@ class TapchanRenderer extends Renderer {
             }))
                 .load(() => {
                     this.isReady = true;
+
+                    //floating bubbles!
+                    this.bubblesEmitter = new PIXI.particles.Emitter(
+                        this.camera, PIXI.loader.resources.bubble.texture, FloatingBubblesEmitterConfig);
+                    this.bubblesEmitter.spawnPos.x = this.viewportWidth / 2;
+                    this.bubblesEmitter.spawnPos.y = this.viewportHeight + 10;
+                    this.bubblesEmitter.spawnRect.h = 1;
+                    this.bubblesEmitter.spawnRect.w = this.viewportWidth;
+                    this.bubblesEmitter.emit = true;
+
                     this.setupStage();
                     this.gameEngine.emit('renderer.ready');
                     resolve();
@@ -93,7 +105,7 @@ class TapchanRenderer extends Renderer {
         this.camera = new PIXI.Container();
         this.camera.addChild(this.layer1, this.layer2);
 
-        // parallax background
+        //background
         this.background = new PIXI.extras.TilingSprite(PIXI.loader.resources.water.texture,
             this.viewportWidth, this.viewportHeight);
         this.stage.addChild(this.background);
@@ -133,6 +145,10 @@ class TapchanRenderer extends Renderer {
         let viewportSeesLeftBound = this.camera.x > 0;
         let viewportSeesTopBound = this.camera.y > 0;
         let viewportSeesBottomBound = this.camera.y < this.viewportHeight - worldHeight;
+
+        //update bubbles!
+        if (this.bubblesEmitter)
+        this.bubblesEmitter.update(now - this.elapsedTime * .001);
 
         for (let objId of Object.keys(this.sprites)) {
             let objData = this.gameEngine.world.objects[objId];
@@ -377,11 +393,14 @@ class TapchanRenderer extends Renderer {
 
         // remove score lines with objects that don't exist anymore
         let scoreEls = scoreContainer.querySelectorAll('.line');
-        for (let x = 0; x < scoreEls.length; x++) {
-            if (data[scoreEls[x].dataset.objId] === null) {
-                scoreEls[x].parentNode.removeChild(scoreEls[x]);
+        //just clear the whole list instead
+        for (let i = 0; i < scoreEls.length; i++) scoreEls[i].remove();
+
+        /*for (let i = 0; i < scoreEls.length; i++) {
+            if (data[scoreEls[i].dataset.objId] === null) {
+                scoreEls[i].parentNode.removeChild(scoreEls[i]);
             }
-        }
+        }*/
 
         for (let id of Object.keys(data)) {
             let scoreEl = scoreContainer.querySelector(`[data-obj-id='${id}']`);
@@ -389,7 +408,8 @@ class TapchanRenderer extends Renderer {
             if (scoreEl === null) {
                 scoreEl = document.createElement('div');
                 scoreEl.classList.add('line');
-                if (this.playerFish && this.playerFish.id === parseInt(id)) scoreEl.classList.add('you');
+                if (this.playerFish && this.playerFish.id === parseInt(id))
+                    scoreEl.classList.add('you');
                 scoreEl.dataset.objId = id;
                 scoreContainer.appendChild(scoreEl);
             }
@@ -410,8 +430,8 @@ class TapchanRenderer extends Renderer {
             return a.data.points < b.data.points;
         });
 
-        for (let x = 0; x < scoreArray.length; x++) {
-            scoreArray[x].el.style.transform = `translateY(${x}rem)`;
+        for (let i = 0; i < scoreArray.length; i++) {
+            scoreArray[i].el.style.transform = `translateY(${i}rem)`;
         }
 
     }

@@ -25,6 +25,7 @@ class TapchanClientEngine extends ClientEngine {
             if (obj.class === Fish && this.isOwnedByPlayer(obj)) {
                 document.body.classList.add('lostGame');
                 document.querySelector('#tryAgain').disabled = false;
+                document.getElementById('tryAgain').focus();
             }
         });
 
@@ -35,6 +36,7 @@ class TapchanClientEngine extends ClientEngine {
                     this.renderer.enableFullScreen();
                 }
                 this.socket.emit('requestRestart');
+                document.activeElement.blur();
             });
 
             document.querySelector('#joinGame').addEventListener('click', () => {
@@ -42,6 +44,7 @@ class TapchanClientEngine extends ClientEngine {
                     this.renderer.enableFullScreen();
                 }
                 this.socket.emit('requestRestart');
+                document.activeElement.blur();
             });
 
             document.querySelector('#reconnect').addEventListener('click', () => {
@@ -93,6 +96,7 @@ class TapchanClientEngine extends ClientEngine {
 
             if ('autostart' in Utils.getUrlVars()) {
                 this.socket.emit('requestRestart');
+                // document.body.focus();
             }
         });
     }

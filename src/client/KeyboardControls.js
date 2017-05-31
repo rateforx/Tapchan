@@ -8,7 +8,8 @@ const keyCodeTable = {
     37: 'left',
     38: 'up',
     39: 'right',
-    40: 'down'
+    40: 'down',
+    //13: 'enter', //return
 };
 
 /**
@@ -37,6 +38,10 @@ class KeyboardControls{
             if (e.keyCode === '32' && !this.activeInput.space) {
                 this.emit('fire');
             }
+        });
+        $(document).on('keydown', e => {
+            if (e.which === 13)
+                $('#tryAgain').click();
         });
 
         document.addEventListener('keydown', (e) => { this.onKeyChange(e, true);});
