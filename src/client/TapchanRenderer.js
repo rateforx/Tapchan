@@ -25,6 +25,7 @@ class TapchanRenderer extends Renderer {
             mine1: 'assets/mine1.png',
             mine2: 'assets/mine2.png',
             mine3: 'assets/mine3.png',
+            mine4: 'assets/mine4.png',
             whale: 'assets/whale.png',
             bubble: 'assets/bubble.png',
             water: 'assets/water.png',
@@ -314,14 +315,12 @@ class TapchanRenderer extends Renderer {
             };
 
             let r = Math.random();
-            if (between(r, 0, .25))
-                sprite = new PIXI.Sprite(PIXI.loader.resources.mine0.texture);
-            if (between(r, .25, .5))
-                sprite = new PIXI.Sprite(PIXI.loader.resources.mine1.texture);
-            if (between(r, .5, .75))
+            if (between(r, 0, .33))
                 sprite = new PIXI.Sprite(PIXI.loader.resources.mine2.texture);
-            if (between(r, .75, 1))
+            if (between(r, .33, .66))
                 sprite = new PIXI.Sprite(PIXI.loader.resources.mine3.texture);
+            if (between(r, .66, 1))
+                sprite = new PIXI.Sprite(PIXI.loader.resources.mine4.texture);
 
             sprite.width = 60;
             sprite.height = 60;
