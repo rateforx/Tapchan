@@ -1,4 +1,4 @@
-# tapchan
+# Tapchan
 
 Fishy game.
 
